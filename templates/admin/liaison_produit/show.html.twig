@@ -1,0 +1,26 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}LiaisonProduit{% endblock %}
+
+{% block body %}
+    <h1>LiaisonProduit</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ liaison_produit.id }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ liaison_produit.type }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_liaison_produit_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_liaison_produit_edit', {'id': liaison_produit.id}) }}">edit</a>
+
+    {{ include('admin/liaison_produit/_delete_form.html.twig') }}
+{% endblock %}

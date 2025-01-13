@@ -1,0 +1,13 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}Edit AbsencesPersonnels{% endblock %}
+
+{% block body %}
+    <h1>Edit AbsencesPersonnels</h1>
+
+    {{ include('comptable/absences_personnels/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_personnel_absences_personnels_index' , {lieu_vente : lieu_vente.id}) }}">back to list</a>
+
+    {{ include('comptable/absences_personnels/_delete_form.html.twig') }}
+{% endblock %}

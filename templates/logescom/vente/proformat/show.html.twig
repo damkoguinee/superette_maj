@@ -1,0 +1,113 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}détail proformat{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_facturation_vente.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    {% if proformat.client is not empty %}
+                        <tr>
+                            <th>Solde {{ proformat.client.prenom|ucwords ~ " " ~ proformat.client.nom |strtoupper }}</th>
+                            <td>
+                                {% include "_common/_solde_collaborateur.html.twig" %}        
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th>Numéro Proformat</th>
+                        <td>{{ proformat.numeroProformat|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Proformat</th>
+                        <td>{{ proformat.totalProformat|number_format(0,',',' ') }}</td>
+                    </tr>
+
+                    {% if frais_sups is not empty %}
+                        <tr>
+                            <th>Montant Frais</th>
+                            <td>
+                                {% for frais in frais_sups %}
+                                    <div class="row">{{frais.fraisSup.designation|ucfirst ~ " " ~ frais.montant|number_format(0,',',' ') }}</div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th>Date de Saisie</th>
+                        <td>{{ proformat.dateSaisie ? proformat.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Saisi par</th>
+                        <td>{{ proformat.saisiePar.prenom|ucwords ~ " " ~ proformat.saisiePar.nom |strtoupper }}</td>
+                    </tr>
+                    
+
+                    <tr>
+                        <th colspan="2" class="text-center bg-info text-white">Liste des produits</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <table class="table table-bordered table-striped table-hover align-middle">
+
+                                <thead class="sticky-top bg-info text-white text-center">
+                                    <tr>
+                                        <th class="bg-info text-white">N°</th>
+                                        <th class="bg-info text-white">Désignation</th>
+                                        <th class="bg-info text-white">Qtité</th>
+                                        <th class="bg-info text-white">P.Unitaire</th>
+                                        <th class="bg-info text-white">P.Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, commande in commandes %}
+                                        {% set total = commande.quantite * (commande.prixVente  ) %}
+
+                                        <tr>
+                                            <td class="text-center">{{ key + 1 }}</td>
+                                            <td>{{ commande.product.designation|ucwords }}</td>
+                                            <td class="text-center" >{{ commande.quantite }}</td>
+                                            <td class="text-end" >{{ commande.prixVente|number_format(0,',',' ') }}</td>
+                                            <td class="text-end" >{{ total|number_format(0,',',' ') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+
+                <a class="btn btn-light" href="{{ path('app_logescom_vente_proformat_index', { lieu_vente : lieu_vente.id}) }}">Retour</a>
+
+                {# {% if is_granted("ROLE_MODIFICATION") %}
+                    <a class="btn btn-warning" href="{{ path('app_logescom_vente_proformat_edit', {'id': proformat.id, lieu_vente : lieu_vente.id, modif_facture : proformat.id}) }}"><i class="fa fa-edit"></i></a>
+                {% endif %} #}
+                {% if is_granted("ROLE_SUPPRESSION") %}
+                    {{ include('logescom/vente/proformat/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

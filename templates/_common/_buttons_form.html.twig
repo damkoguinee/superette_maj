@@ -1,0 +1,13 @@
+<div class="d-flex justify-content-between">
+    <button class="btn btn-primary">
+        <i class="fa fa-save"></i> {{ button_label|default('Enregistrer') }}
+    </button>
+
+    <button type="reset" class="btn btn-warning">
+        <i class="fa fa-eraser"></i>  Effacer
+    </button>
+
+    <a href="{{ path('app_admin_'~ nameEntite ~ '_index') }}" class="btn btn-danger">
+        <i class="fa fa-reply"></i> Annuler
+    </a>
+</div>

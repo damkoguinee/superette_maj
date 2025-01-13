@@ -1,0 +1,195 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}livraison facture{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_facturation.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th colspan="2" class="bg-warning">
+                            <div class="d-flex">
+                                <span class="mx-2 fw-bold">
+                                    {% if facturation.client is not empty %}
+                                        {{ facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom |strtoupper }}
+                                    {% else %}
+                                        {{ facturation.nomClientCash|strtoupper }}
+                                    
+                                    {% endif %}
+                                </span>
+                                <div class="d-flex">
+                                    <span class="mx-2 fw-bold">Numéro Facture</span>
+                                    <span>{{ facturation.numeroFacture|strtoupper }}</span>
+                                </div>
+
+                                <span class="mx-2">Date Facture {{ facturation.dateFacturation ? facturation.dateFacturation|date('d/m/Y') : '' }}</span>
+                                <div class="d-flex">
+                                    <span class="mx-2 fw-bold">Date de Saisie</span>
+                                    <span>{{ facturation.dateSaisie ? facturation.dateSaisie|date('d/m/Y H:i:s') : '' }}</span>
+                                </div>
+
+                                <div class="d-flex">
+                                    <span class="mx-2 fw-bold">Vendu par</span>
+                                    <span>{{ facturation.saisiePar.prenom|ucwords ~ " " ~ facturation.saisiePar.nom |strtoupper }}</span>
+                                </div>
+
+                            </div>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité Cmd</th>
+                        <th class="bg-info text-white">Livré</th>
+                        <th class="bg-info text-white">Reste à Livrer</th>
+                        <th class="bg-info text-white">Livraison</th>
+                        <th class="bg-info text-white">Choix Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, commande in commandes %}
+                        {% set reste = commande.vente.quantite - commande.vente.quantiteLivre %}
+
+                        <form method="post" action="{{ path('app_logescom_livraison_livraison_edit', {'id': commande.vente.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('confirmez-vous cette livraison ?');">
+
+                            <tr>
+                                <td>{{ commande.vente.product.reference|ucwords }}</td>
+
+                                <td>{{ commande.vente.product.designation|ucwords }}</td>
+
+                                <td class="text-center" >{{ commande.vente.quantite }}</td>
+
+                                <td class="text-center" >{{ commande.vente.quantiteLivre }}</td>
+
+                                <td class="text-center" >{{ reste }}</td>
+                                {% if reste != 0 %}
+                                    <td class="text-center" ><input required class="form-control text-center" type="text" name="qtite" value={{reste}} min="0" max="{{reste}}"></td>
+
+                                    <td class="text-center" >
+                                        <input type="hidden" name="id_product" value="{{commande.vente.product.id}}">
+                                        <select required class="form-select" name="stock" id="">
+                                            {% for stock in commande.stocks %}
+                                                {% if stock.totalQuantite > 0 %}
+                                                    <option value="{{stock.id_stock}}">{{stock.nom|ucfirst ~ " " ~ stock.totalQuantite}}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    
+                                    <td class="text-center" ><input class="form-control text-center" type="text" name="commentaire"></td>
+                                    <td class="text-center" ><input class="form-control text-center" type="date" max="{{"now"|date("Y-m-d")}}" name="date" value="{{"now"|date("Y-m-d")}}"></td>
+
+                                    <td class="text-center"><button class="btn btn-success">Livrer</button></td>
+                                {% else %}
+                                    <td colspan="5" class="text-success text-center">Livraison terminée</td>
+                                {% endif %}
+
+                            </tr>
+                        </form>
+                    {% endfor %}
+
+                    <tr>
+                        <form method="post" action="{{ path('app_logescom_livraison_livraison_livraison_globale', {'id': facturation.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('confirmez-vous cette livraison?');">
+                            <th colspan="9" class="w-100">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <select required class="form-select" name="stock_general" id="">
+                                            {% for stock in listeStocks %}
+                                                <option value="{{stock.id}}">{{stock.nomStock|ucfirst}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="form-control text-center" type="text" name="commentaire">
+                                    </div>
+
+                                    <div class="col-2">
+                                        <input class="form-control text-center" type="date" max="{{"now"|date("Y-m-d")}}" name="date" value="{{"now"|date("Y-m-d")}}">
+                                    </div>
+
+                                    <div class="col-2">
+                                        <button class="btn btn-danger">Tout Livrer</button>
+                                    </div>
+                                </div>
+                            </th>
+                        </form>
+                            
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-info text-white" colspan="8">Liste des livraisons de la facture N° {{facturation.numeroFacture|strtoupper}}</th>
+                    </tr>
+                    <tr>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité Livré</th>
+                        <th class="bg-info text-white">Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">Livré par</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, livraison in livraisons %}
+
+                        <form method="post" action="{{ path('app_logescom_livraison_livraison_delete', {'id': livraison.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('confirmez-vous cette livraison ?');">
+
+                            <tr>
+                                <td class="text-center" >{{ livraison.dateLivraison|date("d/m/Y") }}</td>
+
+                                <td>{{ livraison.commande.product.reference|ucwords }}</td>
+
+                                <td>{{ livraison.commande.product.designation|ucwords }}</td>
+
+                                <td class="text-center" >{{ livraison.quantiteLiv }}</td>
+
+                                <td class="text-center" >{{ livraison.stock.nomStock|ucfirst }}</td>
+
+                                <td>{{ livraison.commentaire|ucfirst }}</td>
+                                <td>{{ livraison.saisiePar.prenom|ucfirst ~ " le " ~ livraison.dateSaisie|date("d/m/Y") }}</td>
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livraison.id) }}">
+                                <td class="text-center">
+                                {% if is_granted("ROLE_SUPPRESSION") and livraison.quantiteLiv > 0 %}
+                                    <button class="btn btn-danger">Annuler</button></td>
+                                {% endif %}
+                            </tr>
+                        </form>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            
+        </div>
+    </div>
+{% endblock %}

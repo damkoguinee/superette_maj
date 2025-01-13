@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FraisSup index{% endblock %}
+
+{% block body %}
+    <h1>FraisSup index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Designation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for frais_sup in frais_sups %}
+            <tr>
+                <td>{{ frais_sup.id }}</td>
+                <td>{{ frais_sup.designation }}</td>
+                <td>
+                    <a href="{{ path('app_logescom_admin_frais_sup_show', {'id': frais_sup.id}) }}">show</a>
+                    <a href="{{ path('app_logescom_admin_frais_sup_edit', {'id': frais_sup.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_admin_frais_sup_new') }}">Create new</a>
+{% endblock %}

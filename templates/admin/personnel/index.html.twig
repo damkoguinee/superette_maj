@@ -1,0 +1,61 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}liste des personnels{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center mt-2">Liste des personnels</h3>
+            <a class="btn btn-primary" href="{{ path('app_admin_personnel_new') }}">Ajouter un personnel</a>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th>id</th>
+                        <th>Prénom & Nom</th>
+                        <th>Fonction</th>
+                        <th>Taux horaire</th>
+                        <th>Salaire Base</th>
+                        <th>Téléphone</th>
+                        <th>Rattachement</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, personnel in personnels %}
+                    <tr>
+                        <td class="text-center">{{ (personnel.user.id) }}</td>
+                        <td>{{ personnel.user.prenom|ucwords ~ " " ~ personnel.user.nom|strtoupper }}</td>
+                        <td>{{ personnel.fonction|ucwords }}</td>
+                        <td class="text-end">{{ personnel.tauxHoraire|number_format(0,',',' ') }}</td>
+                        <td class="text-end">{{ personnel.salaireBase|number_format(0,',',' ') }}</td>
+                        <td class="text-center">{{personnel.user.telephone}}</td>
+                        <td>{{personnel.user.lieuVente.adresse|ucfirst}}</td>
+                        <td class="text-center">
+                            <a class="btn btn-success" href="{{ path('app_admin_personnel_show', {'id': personnel.id}) }}"><i class="fa fa-eye"></i></a>
+                            <a class="btn btn-warning" href="{{ path('app_admin_personnel_edit', {'id': personnel.id}) }}"><i class="fa fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Aucun personnel trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

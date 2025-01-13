@@ -1,0 +1,74 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}detail de la facture{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Collaborateur</th>
+                        <td>{{ facture_frais.fournisseur.prenom|ucwords ~ " " ~ facture_frais.fournisseur.nom|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numero Facture</th>
+                        <td>{{ facture_frais.numeroFacture }}</td>
+                    </tr>
+                    <tr>
+                        <th>Commentaire</th>
+                        <td>{{ facture_frais.commentaire|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Montant TTC</th>
+                        <td>{{ (facture_frais.devise.nomDevise == 'gnf' ? facture_frais.montant|number_format(0,',',' ') : facture_frais.montant|number_format(2,',',' ')) ~ " "~ facture_frais.devise.nomDevise| strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>TVA</th>
+                        <td>{{ (facture_frais.devise.nomDevise == 'gnf' ? facture_frais.tva|number_format(0,',',' ') : facture_frais.tva|number_format(2,',',' ')) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Taux</th>
+                        <td>{{ facture_frais.taux|number_format(2,',',' ')}}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de la facture</th>
+                        <td>{{ facture_frais.dateFacture ? facture_frais.dateFacture|date('d/m/Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de saisie</th>
+                        <td>{{ facture_frais.dateSaisie ? facture_frais.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Saisie par</th>
+                        <td>{{ facture_frais.personnel.prenom|ucwords ~ " " ~ facture_frais.personnel.nom|strtoupper }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-light" href="{{ path('app_logescom_achat_facture_frais_index', {lieu_vente : lieu_vente.id}) }}">Retour</a>
+
+                
+                {% if is_granted("ROLE_MODIFICATION") %}
+                    <a class="btn btn-warning" href="{{ path('app_logescom_achat_facture_frais_edit', {'id': facture_frais.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                {% endif %}
+                {{ include('logescom/achat/facture_frais/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

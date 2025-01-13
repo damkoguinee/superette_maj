@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FraisSup{% endblock %}
+
+{% block body %}
+    <h1>FraisSup</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ frais_sup.id }}</td>
+            </tr>
+            <tr>
+                <th>Designation</th>
+                <td>{{ frais_sup.designation }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_admin_frais_sup_index') }}">back to list</a>
+
+    <a href="{{ path('app_logescom_admin_frais_sup_edit', {'id': frais_sup.id}) }}">edit</a>
+
+    {{ include('logescom/admin/frais_sup/_delete_form.html.twig') }}
+{% endblock %}

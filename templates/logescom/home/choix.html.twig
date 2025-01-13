@@ -1,0 +1,188 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}fonctionnalités{% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel" >
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 90vh; background-color:#193c51;" >
+
+        <div class="row m-4 p-4 justify-content-center align-item-center" style="margin: auto; width:90%; background-image: url({{ asset('images/config/fond.jpg') }});">
+
+            <div class="bg-secondary py-2 d-flex justify-content-center align-items-center ">
+                {% for key, data in stockData %}
+                    {% set alertClass = '' %}
+                    {# Déterminer la classe en fonction de la clé `key` #}
+                    {% if key == 'perimé' %}
+                        {% set alertClass = 'alert-danger' %}
+                        {% set alert = 'perimé' %}
+                    {% elseif key == 'dans 1 semaine' %}
+                        {% set alertClass = 'alert-warning' %}
+                        {% set alert = 1 %}
+                    {% elseif key == 'dans 2 semaines' %}
+                        {% set alertClass = 'alert-primary' %}
+                        {% set alert = 2 %}
+
+                    {% elseif key == 'dans 3 semaines' %}
+                        {% set alertClass = 'alert-info' %}
+                        {% set alert = 3 %}
+                    {% elseif key == 'dans 4 semaines' %}
+                        {% set alertClass = 'alert-light' %}
+                        {% set alert = 4 %}
+
+                    {% elseif key == 'dans 6 semaines' %}
+                        {% set alertClass = 'alert-success' %}
+                        {% set alert = 6 %}
+
+                    {% endif %}
+                    {% if data|length is not empty and data|length != 0  %}
+                        <div class="alert {{ alertClass }} m-2 p-2">
+                            <a class="btn " href="{{path('app_logescom_home_alert', {id : lieu_vente.id, alert : alert} )}}">{{ key }}: {{ data|length }} produit(s)</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="row">
+            
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_vente_facturation_vente", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/achat.jpg') }}" class="card-img-top m-auto" alt="vente" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Ventes</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_vente_facturation_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/vente.jpg') }}" class="card-img-top m-auto" alt="vente" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion des ventes</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_bilan_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/compta.jpg') }}" class="card-img-top m-auto" alt="vente" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Bilan Journalier</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_stock_gestion_stock_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/stock.jpg') }}" class="card-img-top m-auto" alt="stock" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion de stock</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_personnel_absences_personnel_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/personnel.jpg') }}" class="card-img-top m-auto" alt="personnel" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion/personnel</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_sorties_decaissement_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/retrait.jpg') }}" class="card-img-top m-auto" alt="retrait" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Sorties</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_entrees_versement_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/versement.jpg') }}" class="card-img-top m-auto" alt="versement" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Entrées</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_caisse_transfert_fond_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/caisse.jpg') }}" class="card-img-top m-auto" alt="caisse" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion des Caisses</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'client', type2 : 'client-fournisseur'})}}">
+                        <div class="card" style="width: 9rem; height: 8rem; ">
+                            <img src="{{ asset('images/config/compte.jpg') }}" class="card-img-top m-auto" alt="compte" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion des Comptes</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_client_client_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/clients.jpg') }}" class="card-img-top m-auto" alt="clients" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Gestion/clients</h6>
+                            </div>
+                        </div>
+                    </a>
+                    
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_achat_achat_fournisseur_index", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/achatfournisseur.jpg') }}" class="card-img-top m-auto" alt="achat" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Achats Interne</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-secondary" href="{{path("app_logescom_livraison_livraison_facture", {lieu_vente : lieu_vente.id})}}">
+                        <div class="card" style="width: 9rem; height: 8rem;">
+                            <img src="{{ asset('images/config/livraison.jpg') }}" class="card-img-top m-auto" alt="livraison" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center text-primary">Livraison</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+{% endblock %}
+

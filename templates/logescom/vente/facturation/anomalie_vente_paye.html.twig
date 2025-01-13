@@ -1,0 +1,45 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row px-2">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Facture</th>
+                    <th>Client</th>
+                    <th>Client</th>
+                    <th>Montant Facture</th>
+                    <th>Compte</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, anomalie in anomalies %}
+                {# {{dump(anomalie)}} #}
+                    
+                    <tr>
+                        <th>{{key + 1}}</th>
+                        <th>{{anomalie.facture.numeroFacture}}</th>
+                        <th>{{anomalie.facture.client.prenom|ucwords ~ " " ~ anomalie.facture.client.nom|strtoupper}}</th>
+                        <th>{{anomalie.mouvement.collaborateur.prenom|ucwords ~ " " ~ anomalie.mouvement.collaborateur.nom|strtoupper}}</th>
+                        
+                        <th>{{anomalie.facture.totalFacture|number_format(0,',',' ')}}</th>
+                        <th>{{anomalie.mouvement.montant|number_format(0,',',' ')}} </th>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

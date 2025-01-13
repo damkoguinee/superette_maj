@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir le mode de paiement{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="h3 mb-4">Choisissez le mode de paiement</h1>
+        <p class="lead">Votre licence <strong>{{ licence.numeroLicence }}</strong> expire le {{ licence.dateFin|date('d/m/Y') }}. Montant à payer : <strong>{{ licence.tarif|number_format(0,',',' ') }} GNF</strong>.</p>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <!-- Carte pour paiement par carte bancaire -->
+        <div class="col-md-4 d-flex">
+            <div class="card payment-option shadow-sm" style="cursor: pointer; min-height: 250px; border-radius: 10px; flex: 1;">
+                <div class="card-body text-center">
+                    <img src="{{ asset('images/config/carteBancaire.jpg') }}" alt="Carte Bancaire" style="width: 100px;" class="mb-3">
+                    <h5 class="card-title mt-3">Carte Bancaire</h5>
+                    <p class="card-text">Payez en toute sécurité avec votre carte bancaire (Visa, MasterCard).</p>
+                    <a href="{{ path('app_licence_paiement_card') }}" class="btn btn-primary btn-lg mt-3">Payer avec Carte Bancaire</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte pour paiement via Orange Money -->
+        <div class="col-md-4 d-flex">
+            <div class="card payment-option shadow-sm" style="cursor: pointer; min-height: 250px; border-radius: 10px; flex: 1;">
+                <div class="card-body text-center">
+                    <img src="{{ asset('images/config/orangeMoney.jpg') }}" alt="Orange Money" style="width: 100px;" class="mb-3">
+                    <h5 class="card-title mt-3">Orange Money</h5>
+                    <p class="card-text">Utilisez votre compte Orange Money pour effectuer un paiement rapide.</p>
+                    <a href="{{ path('app_licence_paiement_orange_money') }}" class="btn btn-warning btn-lg mt-3">Payer avec Orange Money</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-option {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .payment-option:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{{ form_errors(form) }}
+{{ form_start(form) }}
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.fonction) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.username) }}
+        </div>               
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.password) }}
+        </div>
+
+        <div class="col-sm-12 col-md-3" style="overflow:auto ">
+            <div style="height:50px;">
+                {{ form_row(form_user.roles) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-1"> 
+        
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.lieuVente) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.nom) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.prenom) }}
+        </div>               
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.telephone) }}
+        </div>
+    </div>
+
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-3" style="overflow:auto ">
+            <div style="height:50px;">
+                {{ form_row(form_user.statut) }}
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.tauxHoraire) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.salaireBase) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form_user.email) }}
+        </div>  
+    </div>
+
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form_user.adresse) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.ville) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.region) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form_user.pays) }}
+        </div>   
+    </div>
+
+    <div class="row mb-1"> 
+        <div class="col-sm-6 col-md-4">
+            {{ form_row(form.signature) }}
+        </div>
+        <div class="col-sm-6 col-md-4">
+            {{ form_row(form.documentIdentite) }}
+        </div>
+        <div class="col-sm-6 col-md-4">
+            {{ form_row(form.photoIdentite) }}
+        </div>
+        
+    </div>
+
+    <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(form) }}

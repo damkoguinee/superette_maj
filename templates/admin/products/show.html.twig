@@ -1,0 +1,175 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+
+            <h3 class="text-center">{{product.designation| ucfirst}}</h3>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Référence</th>
+                        <td>{{ product.reference| ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Désignation</th>
+                        <td>{{ product.designation| ucfirst }}</td>
+                    </tr>
+                    {% if product.dimension.valeurDimension is defined %}
+                    
+                        <tr>
+                            <th>Dimension</th>
+                            <td>{{ product.dimension.valeurDimension }}</td>
+                        </tr>
+                    {% endif %}
+
+                    {% if product.epaisseur.valeurEpaisseur is defined %}
+
+                        <tr>
+                            <th>Epaisseur</th>
+                            <td>{{ product.epaisseur.valeurEpaisseur }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Catégorie</th>
+                        <td>{{ product.categorie.nameCategorie| ucfirst }}</td>
+                    </tr>
+                    {% if product.codeBarre is defined %}
+                        <tr>
+                            <th>Codebarre</th>
+                            <td>{{ product.codeBarre }}</td>
+                        </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th>Type de produit</th>
+                        <td>{{ product.typeProduit }}</td>
+                    </tr>
+                    {% if product.nbrePiece is defined %}
+                        <tr>
+                            <th>Nombre de pièce</th>
+                            <td>{{ product.nbrePiece }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if product.nbrePaquet is defined %}
+                        <tr>
+                            <th>Nombre de paquet</th>
+                            <td>{{ product.nbrePaquet }}</td>
+                        </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th>Statut</th>
+                        <td>{{ product.statut }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Statut comptable</th>
+                        <td>{{ product.statutComptable }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>TVA</th>
+                        <td>{{ product.tva *100 }} %</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <form action="{{ path('app_admin_products_show', {'id': product.id}) }}">
+
+                                <table class="table table-bordered table-striped table-hover align-middle">
+
+                                    <thead class="sticky-top bg-light text-center">
+                                        <tr>
+                                            <th colspan="4" class="bg-info  text-white">Liste des produits liés</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4" class="bg-info  text-white">
+                                                <div class="row align-items-center w-100">
+                                                    <div class="col-sm-12 col-md-4">Ajouter une liaison</div>
+                                                    <div class="col-sm-12 col-md-6">
+                                                        <input type="text" name="search_product" class="form-control" id="search_product" placeholder="{{product2 ? product2.designation : "Récherchez un produit"}}">
+                                                        <input type="hidden" name="id_product" value="{{product2 ? product2.id : null}}">
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-2">
+                                                        <button type="submit" class="btn btn-success my-2">Ajouter</button>
+                                                    </div>
+                                                    <div class="bg-light text-white" id="result-search-product"></div>
+                                                    
+
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>N°</th>
+                                            <th>Référence</th>
+                                            <th>Désignation</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, liaison in liaisons %}            
+                                            <tr>
+                                                <td class="text-center">
+                                                    {{ (key)+1 }}
+                                                </td>
+                                                {% if product.typeProduit == 'en_gros' %}
+                                                    
+                                                    <td>{{ liaison.produit2.reference }}</td>
+                                                    <td>{{ liaison.produit2.designation }}</td>
+                                                    
+                                                    <td class="text-center">
+                                                        <a class="btn btn-success" href="{{ path('app_admin_products_show', {'id': liaison.produit2.id}) }}"><i class="fa fa-eye"></i></a>
+                                                        <a class="btn btn-danger" onclick="alerteS()" href="{{ path('app_admin_liaison_produit_delete', {'id': liaison.id}) }}"><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                        
+                                                {% else %}
+                                                    <td>{{ liaison.produit1.reference }}</td>
+                                                    <td>{{ liaison.produit1.designation }}</td>
+                                                    <td class="text-center">
+                                                        <a class="btn btn-success" href="{{ path('app_admin_products_show', {'id': liaison.produit1.id}) }}"><i class="fa fa-eye"></i></a>
+                                                        <a class="btn btn-danger" onclick="alerteS()" href="{{ path('app_admin_liaison_produit_delete', {'id': liaison.id}) }}"><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="4">Aucun produit lié trouvé</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </form>
+
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="pb-4 d-flex justify-content-between">
+                <a class="btn btn-secondary" href="{{ path('app_admin_products_index') }}">Retour</a>
+
+                <a class="btn btn-info" href="{{ path('app_admin_products_edit', {'id': product.id}) }}"><i class="fa fa-edit"></i></a>
+                {% if mouvement_prod is empty %}
+                    {{ include('_common/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

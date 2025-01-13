@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}pdf{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+			{# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
+		{% endblock %}
+
+        {% block javascripts %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		    <script src="https://kit.fontawesome.com/8df11ad090.js" crossorigin="anonymous"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <style>
+            body {
+                margin: 0px;
+                width: 100%;
+                height: 68%;
+                padding: 0px;
+            }
+            .ticket {
+                margin: 0px;
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;
+                border-collapse: collapse;
+                page-break-inside: avoid;
+            }
+            .border th, .border td {
+                border: 1px solid black;
+                padding: 0px;
+                background: white;
+                page-break-inside: avoid;
+            }
+            .border th {
+                font-size: 16px;
+                color: black;
+                text-align: right;
+            }
+            .border td {
+                font-size: 14px;
+                color: black;
+                text-align: center;
+            }
+            .footer {
+                font-size: 18px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <thead>
+                <tr>
+                    <td colspan="4" style="border: 0px;">
+                        <table>
+                            <thead>
+                                {% if config is empty %}
+                                    {% set color = '#33C4FF' %}
+                                    {% set backgroundColor = '#33C4FF' %}
+                                {% else %}
+                                    {% set color = config.color %}
+                                    {% set backgroundColor = config.backgroundColor %}
+                                {% endif %}
+
+
+                                {% if config is empty %}
+                                    {{ include("_common/_entete_facture.html.twig") }}
+                                {% elseif config.formatFacture == 'ancien' %}
+                                    {{ include("_common/_entete_facture_ancien.html.twig") }}
+                                {% else %}
+                                    {{ include("_common/_entete_facture.html.twig") }}
+                                    
+                                {% endif %} 
+                                <tr>
+                                    <th colspan="4" height="20" style="border:0px solid white;"></th>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="4" style="border:0px;">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <th style="width: 2%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">N°</th>
+                                                    <th style="width: 28%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Désignation</th>
+                                                    <th style="width: 8%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Qtite</th>
+                                                    <th style="width: 8%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Livré</th>
+                                                    <th style="width: 12%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Prix Unitaire</th>
+                                                    <th style="width: 12%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Remise</th>
+                                                    <th style="width: 15%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Prix Total</th>
+                                                    <th style="width: 15%; background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{color}};">Lieu de liv</th>
+                                                </tr>
+                                           
+                                                {% set numero = 0 %}
+                                                {% set cumulPrixTotalHt = 0 %}
+                                                {% set cumulRemise = 0 %}
+                                                {% set cumulTva = 0 %}
+                                                {% set nbre_en_gros = 0 %};
+                                                {% set nbre_en_gros_livre = 0 %};
+                                                {% set nbre_paquet = 0 %};
+                                                {% set nbre_paquet_livre = 0 %};
+                                                {% set nbre_detail = 0 %};
+                                                {% set nbre_detail_livre = 0 %};
+                                                {% for key, cmd in commandes.data %}
+                                                    {% if cmd.commande.product.typeProduit == 'detail' %}
+                                                        {% set nbre_detail = nbre_detail + cmd.commande.quantite  %};
+                                                        {% set nbre_detail_livre = nbre_detail_livre + cmd.commande.quantiteLivre  %};
+                                                    {% elseif cmd.commande.product.typeProduit == 'paquet' %}
+                                                        {% set nbre_paquet = nbre_paquet + cmd.commande.quantite  %};
+                                                        {% set nbre_paquet_livre = nbre_paquet_livre + cmd.commande.quantiteLivre  %};
+                                                    {% else %}
+                                                        {% set nbre_en_gros = nbre_en_gros + cmd.commande.quantite  %};
+                                                        {% set nbre_en_gros_livre = nbre_en_gros_livre + cmd.commande.quantiteLivre  %};
+                                                    {% endif %}
+                
+                                                    {% set prixTotalHt = ((cmd.commande.quantite * cmd.commande.prixVente) - (cmd.commande.quantite * cmd.commande.remise ))  %}
+                
+                                                    {% set cumulRemise = cumulRemise + (cmd.commande.quantite * cmd.commande.remise ) %}
+                
+                                                    {% set montantTva = cmd.commande.quantite * (cmd.commande.prixVente * cmd.commande.tva) %}
+                
+                                                    {% set cumulTva = cumulTva + montantTva %}
+                
+                                                    {% set cumulPrixTotalHt = cumulPrixTotalHt + prixTotalHt %}
+                                                    {% set numero = numero + 1 %}
+                                                    {% if key == 20 or key == 42 or key == 50 or key == 100 %}
+                                                        <tr style="page-break-after: always;">
+                                                    {% else %}
+                                                        <tr>
+                                                    {% endif %}
+                                                    
+                                                        <td height="20" style="border:0.6px solid {{color}}; text-center">{{ numero }}</td>
+                                                        <td style="border:0.6px solid {{color}}; text-align:left;">{{cmd.commande.product.designation|ucfirst}}</td>
+                                                        <td style="border:0.6px solid {{color}};">{{cmd.commande.quantite}}</td>
+                                                        <td style="border:0.6px solid {{color}};">{{cmd.commande.quantiteLivre|number_format(0,',',' ')}}</td>
+                                                        <td style="border:0.6px solid {{color}}; text-align:right; padding-right: 5px;">{{cmd.commande.prixVente|number_format(0,',',' ') != 0 ? cmd.commande.prixVente|number_format(0,',',' ') : 'offert'}}</td>
+                                                        <td style="border:0.6px solid {{color}}; text-align:right; padding-right: 5px;">{{cmd.commande.remise|number_format(0,',',' ')}}</td>
+                                                        <td style="border:0.6px solid {{color}}; text-align:right; padding-right: 5px;">{{cmd.commande.prixVente|number_format(0,',',' ') != 0 ? prixTotalHt|number_format(0,',',' ') : 'offert'}}</td>
+                                                        <td style="border:0.6px solid {{color}}; font-size: 12px;">{{cmd.livraison|ucfirst}}</td>
+                                                    </tr>
+                                                    
+                                                {% endfor %}
+                                                {% set cumulPrixTotalHt = cumulPrixTotalHt %}
+                                                {% for key, frais in commandes.frais %}
+                                                    {% set cumulPrixTotalHt = cumulPrixTotalHt + frais.montant %}
+                                                    {% set numero = numero + 1 %}
+                                                    <tr>
+                                                        <td style="border:0.6px solid {{color}}; text-center">{{ numero }}</td>
+                                                        <td colspan="5" style="border:0.6px solid {{color}}; text-align:left;">{{frais.fraisSup.designation|ucfirst}}</td>
+                                                        <td style="border:0.6px solid {{color}}; text-align:right;">{{frais.montant|number_format(0,',',' ')}}</td>
+                                                        <td style="border: 0.6px solid {{color}};"></td>
+                
+                                                    </tr>
+                                                {% endfor %}
+                                                
+                                                {% set cumulRemiseGlob = facturation.montantRemise %}
+                                                {% if numero > 10 %}
+                                                    {% set height = 10  %}
+                                                {% else %}
+                                                    {% set height = 100 - numero %}
+                                                {% endif %}
+                                                <tr>
+                                                    <td colspan="8" height="{{height}}" style="border:none; border-left:0.6px solid {{color}}; border-right:0.6px solid {{color}};"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" rowspan="4" height='30' style="border: 0.6px solid {{color}};"></td>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; text-align:right; padding:6px;">Prix Total HT</td>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; text-align:right; padding-right: 20px;">{{(cumulPrixTotalHt + cumulRemise)|number_format(0,',',' ')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding:6px;">TVA</td>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding-right: 20px;">{{cumulTva|number_format(0,',',' ')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding:6px;">Montant Remise</td>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding-right: 20px;">{{cumulRemiseGlob|number_format(0,',',' ')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding:6px;">Prix Total TTC</td>
+                                                    <td colspan="2" style="border: 0.6px solid {{color}}; border-top:none; text-align:right; padding-right: 20px;">{{(cumulPrixTotalHt - (cumulRemiseGlob - cumulRemise) + cumulTva) |number_format(0,',',' ')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" height="30" style="border: 0.6px solid {{color}}; border-right:none; text-align: center; font-size:16px;">
+                                                        {% if facturation.montantPaye is empty %}
+                                                            Montant Payé: {{facturation.montantpaye|number_format(0,',',' ')}}
+                                                        {% else %}
+                                                            <table style='border: 2px solid {{color}};'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 2px solid {{color}};">Montant Payé: {{facturation.montantpaye|number_format(0,',',' ')}}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody style="text-align:left;">
+                                                                    {% for mode in mouvements_caisse %}
+                                                                        <tr>
+                                                                            <td style="text-align:left; border:0px;" >{{mode.modePaie.designation|ucfirst ~ ": " ~ mode.montant|number_format(0,',',' ')}}</td>
+                                                                        </tr>                                    
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                            
+                                                        {% endif %}
+                                                    </td>
+                                                    <td colspan="4" style="border: 0.6px solid {{color}}; border-left:none; padding-right: 15px; text-align: center; font-size:16px;">Reste à Payer: {{(cumulPrixTotalHt - (cumulRemiseGlob - cumulRemise) - facturation.montantpaye)|number_format(0,',',' ')}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8" style="border: 0.6px solid {{color}}; padding-right: 15px; font-size:16px;">{{facturation.commentaire|ucfirst}}</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="8" style="border: 0.6px solid {{color}}; padding-right: 15px; font-size:16px;">
+                                                        {% if nbre_en_gros %}
+                                                            Carton(s)/Barre(s) : {{nbre_en_gros}}/{{nbre_en_gros_livre}}
+                                                        {% endif %}
+
+                                                        {% if nbre_paquet %}
+                                                            Paquet(s) : {{nbre_paquet}}/{{nbre_paquet_livre}}
+                                                        {% endif %}
+
+                                                        {% if nbre_detail %}
+                                                            Détail(s) : {{nbre_detail}}/{{nbre_detail_livre}}
+                                                        {% endif %}
+                                                    
+                                                    </td>
+                                                </tr>
+                
+                                                <tr>
+                                                    <td colspan="8" height="30" style="border: 0.6px solid {{color}}; text-align: left; font-size:16px; padding-top: 5px;">
+                                                        Solde à la date de la facture {{facturation.dateFacturation|date("d/m/Y")}}: 
+                                                        {% for solde in soldes_date %}
+                                                            {% if solde.montant is not empty %}
+                                                                {% if solde.montant < 0 %}
+                                                                    {% set color = "red" %}
+                                                                    <label style="padding-left: 10px; color:{{color}}">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? ( - solde.montant )|number_format(0,',',' ') : ( - solde.montant )|number_format(2,',',' ') }}</label>
+                                                                {% else %}
+                                                                    {% set color = "green" %}
+                                                                    <label style="padding-left: 10px; color:{{color}}">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? solde.montant|number_format(0,',',' ') : solde.montant|number_format(2,',',' ') }}</label>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %} <br/><br/>
+                
+                                                        Solde actuel {{"now"|date("d/m/Y")}}: 
+                                                        {% for solde in soldes %}
+                                                            {% if solde.montant is not empty %}
+                                                                {% if solde.montant < 0 %}
+                                                                    {% set color = "red" %}
+                                                                    <label style="padding-left: 10px; color:{{color}}">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? ( - solde.montant )|number_format(0,',',' ') : ( - solde.montant )|number_format(2,',',' ') }}</label>
+                                                                {% else %}
+                                                                    {% set color = "green" %}
+                                                                    <label style="padding-left: 10px; color:{{color}}">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? solde.montant|number_format(0,',',' ') : solde.montant|number_format(2,',',' ') }}</label>
+                                                                {% endif %}
+                                                                
+                                                            {% endif %}
+                                                            
+                                                        {% endfor %}
+                                                        {# {{dump(solde_collaborateur)}} #}
+                                                    </td>
+                                                </tr>
+                
+                                                <tr>
+                                                    <th style="border:0px; text-align:center;" colspan="4">Le Gestionnaire</th>
+                                                    <th style="border:0px; text-align:center;" colspan="4">Le Client</th>
+                                                </tr>
+
+                                                {% if signature %}
+                                                    <tr>
+                                                        <th colspan="4" style=" border:0px; text-align:center;">
+                                                            <img src="data:image/jpeg;base64,{{ signature }}" alt="Logo"width="100" height="100">
+                                                        </th>
+
+                                                        <th colspan="4" style=" border:0px; text-align:center;"></th>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="4" style="border:0px; text-align:center;">{{facturation.saisiePar.prenom | ucwords ~ " " ~ facturation.saisiePar.nom | strtoupper }}</td>
+                                                        
+                                                        <td colspan="4" style=" border:0px; text-align:center;">{{facturation.client ? facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom|strtoupper : facturation.nomClientCash|ucfirst}}</td>
+                                                    </tr>
+                                                {% else %}
+
+                                                    <tr>
+                                                        <td colspan="4" style="padding-top: 70px; border:0px; text-align:center;">{{facturation.saisiePar.prenom | ucwords ~ " " ~ facturation.saisiePar.nom | strtoupper }}</td>
+                                                        
+                                                        <td colspan="4" style="padding-top: 70px;  border:0px; text-align:center;">{{facturation.client ? facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom|strtoupper : facturation.nomClientCash|ucfirst}}</td>
+                                                    </tr>
+                                                {% endif %}
+                                                
+                                
+                                                
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </thead>
+                            
+                        </table>
+                    </td>
+                </tr>                
+            </thead> 
+            <footer style="position: fixed;bottom: 0; width: 100%;text-align: right; font-family:italic; font-size: 10px;">
+                <p>Facture imprimée par  : {{app.user.prenom | ucwords ~ " " ~ app.user.nom | strtoupper ~ " le " ~ "now"|date("d/m/Y à H:i")}}</p>
+            </footer>
+        </table>
+        
+    </body>
+</html>

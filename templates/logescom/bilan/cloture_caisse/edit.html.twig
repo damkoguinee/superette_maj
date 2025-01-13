@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ClotureCaisse{% endblock %}
+
+{% block body %}
+    <h1>Edit ClotureCaisse</h1>
+
+    {{ include('nhema/caisse/cloture_caisse/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_nhema_caisse_cloture_caisse_index') }}">back to list</a>
+
+    {{ include('nhema/caisse/cloture_caisse/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}liste des utilisateurs{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+	{{ include("_common/_messages_flash.html.twig") }}
+    <h3 class="text-center">Liste des Utilisateurs</h3>
+
+
+    <table class="table table-bordered table-striped table-hover align-middle">
+        <thead class="sticky-top bg-light text-center">
+            <tr>
+                <th>N°</th>
+                <th>Pseudo</th>
+                <th>Niveau</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Téléphone</th>
+                <th>Date d'inscription</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user|autorisations}}</td>
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.telephone }}</td>
+                {# <td>{{ user.dateInscription ? user.dateInscription|date('d/m/Y') : '' }}</td> #}
+                <td class="text-center">
+                    <a class="btn btn-success" href="{{ path('app_admin_user_show', {'id': user.id}) }}"><i class="fa fa-eye"></i></a>
+                    <a class="btn btn-warning" href="{{ path('app_admin_user_edit', {'id': user.id}) }}"><i class="fa fa-edit"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">Aucun utilisateur trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('app_admin_user_new') }}">Ajouter un utilisateur</a>
+
+{% endblock %}

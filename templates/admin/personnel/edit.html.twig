@@ -1,0 +1,30 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}détail du personnel{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h4>Modifier le personnel: {{ personnel.user.prenom|ucwords ~ " " ~ personnel.user.nom|strtoupper }}</h4>
+
+            {{ include('admin/personnel/_form.html.twig', {'button_label': 'Modifier'}) }}
+            <div class="d-flex justify-content-between my-4">
+                <a class='btn btn-light' href="{{ path('app_admin_personnel_index') }}">Retour</a>
+                {{ include('admin/personnel/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

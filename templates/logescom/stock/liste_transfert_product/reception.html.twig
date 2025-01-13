@@ -1,0 +1,134 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}réception des produits{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+
+    <div class="row">
+        {% include "_common/_nav_stock_transfert.html.twig" %}
+        <div class="col-sm-12 col-md-10" >
+            {% include "_common/_messages_flash.html.twig" %}
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th class="bg-info text-white" colspan="7">Réception des produits de {{transfert.lieuVenteDepart.adresse|ucwords}} du transfert N° {{transfert.id}}</th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Qtite transf</th>
+                        <th>Récept</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, product_reception in products_reception %}                        
+                        <tr>
+                            <td class="text-center">{{key + 1}}</td>
+                            <td>{{  product_reception.product.reference|strtoupper }}</td>
+                            <td>{{  product_reception.product.designation|ucwords }}</td>
+                            <td class="text-center">{{ product_reception.quantite }}</td>
+                            <form class="form" method="POST" action="{{ path('app_logescom_stock_liste_transfert_products_reception', {'id': transfert.id, lieu_vente : lieu_vente.id}) }}">
+                                <td class="text-center">
+                                    {% if product_reception.quantite - product_reception.quantiteRecep == 0 %}
+                                        <span class="text-center">clos</span>
+                                    {% else %}
+                                        <input type="number" name="quantite" value="{{ product_reception.quantite - product_reception.quantiteRecep }}" min="1" max="{{ product_reception.quantite - product_reception.quantiteRecep}}" class="form-control text-center">
+                                        
+                                    {% endif %}    
+
+                                    <input type="hidden" name="id_liste_transfert" value="{{ product_reception.id}}">
+                                    <input type="hidden" name="reception" value="reception">
+                                </td>
+
+                                <td class="text-center">
+                                    {% if product_reception.quantite - product_reception.quantiteRecep == 0 %}
+                                        <span class="text-center">clos</span>
+                                    {% else %}
+                                        <select name="id_stock_recep" id="" class="form-select">
+                                            <option value=""></option>
+                                            {% for liste_stock in liste_stocks %}
+                                                <option value="{{liste_stock.id}}">{{liste_stock.nomStock}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        
+                                    {% endif %}  
+                                </td>                     
+                                <td class="text-center">
+                                    {% if product_reception.quantite - product_reception.quantiteRecep == 0 %}
+                                        <span class="text-center">clos</span>
+                                    {% else %}
+                                        <button onClick="alerteConfirmation()" class="btn btn-warning mx-1">Réceptionner</button>
+                                    {% endif %}  
+                                </td>
+                            </form> 
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">Aucun produit disponible</td>
+                        </tr>
+                    {% endfor %}
+                </tbody> 
+            </table>
+
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-success text-center">
+                    <tr>
+                        <th class="bg-success" colspan="9">Liste des produits réceptionnés</th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Départ</th>
+                        <th>Qtité</th>
+                        <th>Arrivée</th>
+                        <th class="text-nowrap">Récéptionner par</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, liste_reception in liste_receptions %}  
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class="text-center">{{ liste_reception.dateOperation ? liste_reception.dateOperation|date('d/m/Y') : "" }}</td>
+                            <td>{{ liste_reception.product.reference }}</td>
+                            <td>{{ liste_reception.product.designation }}</td>
+                            <td class="text-center">{{liste_reception.transfert.stockDepart.nomStock|ucwords}}</td>  
+                            <td class="text-center">{{liste_reception.quantite}}</td>
+                            <td class="text-center">{{liste_reception.transfert.stockRecep ? liste_reception.transfert.stockRecep.nomStock|ucwords : "non receptionné"}}</td>
+                            <td class="text-center">{{liste_reception.personnel.prenom|ucwords}}</td>
+                            <td class="text-center">
+                                
+                                <a onClick="alerteS()" href="{{path("app_logescom_stock_liste_transfert_product_delete_reception", {id : liste_reception.id, lieu_vente : lieu_vente.id})}}" class="btn btn-danger mx-1"><i class="fa fa-trash"></i></a>
+                                
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="9">Produits non réceptionnés</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

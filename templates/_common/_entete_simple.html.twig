@@ -1,0 +1,31 @@
+
+<tr>
+    <td colspan="4" style="text-align:center;  padding-top: 5px; border: 0px;">
+        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="{{config.largLogo}}" height="{{config.longLogo}}">
+    </td> 
+</tr>
+<tr>               
+    <td colspan="4" style="text-align:center;  padding-top: 5px; border: 0px;">
+        <label style="color:{{color}}; text-align:center; font-weight: bold; font-size: 18px; " for="">
+            {% if config is empty %}
+                {{lieu_vente.entreprise.nomEntreprise}}
+            {% elseif config.nomEntreprise == 'actif' %}
+                {{lieu_vente.entreprise.nomEntreprise}}
+            {% else %}
+                
+                
+            {% endif %}
+            
+        </label><br/>
+        <label style="color:{{color}};">{{lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement}}</label>
+        <span style="color:{{color}};">Ad: {{lieu_vente.adresse|ucfirst}}</span>
+        <span style="color:{{color}};">Tél: {{lieu_vente.telephone}}</span>
+        <span style="color:{{color}};">Email: {{lieu_vente.email}}</span>
+        <span style="color:{{color}};">gestionnaire: </span>{{lieu_vente.gestionnaire.prenom|ucwords}}</span>
+        
+    </td>
+</tr>
+
+<tr>
+    <th colspan="4" height="20" style="border:0px solid white;"></th>
+</tr>

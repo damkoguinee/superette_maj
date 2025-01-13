@@ -1,0 +1,15 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}modifier Hopital{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+
+            {{ include('admin/hopital/_form.html.twig') }}
+
+            {# <a class="btn btn-light" href="{{ path('app_admin_hopital_show', {'id': hopital.id}) }}">Retour</a> #}
+        </div>
+    </div>
+{% endblock %}

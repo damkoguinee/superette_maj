@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta name="description" content="matériel de construction, matériaux de construction, tubes carrés, tubes rectangulaires, tôles, maison, soudure, quincaillerie">
+        <meta charset="UTF-8">
+        <title>{% block title %}matériaux de construction |{{entreprise.nomEntreprise}}{% endblock %}</title>
+        {% if entreprise is defined %}            
+            <link rel="icon" href="{{ asset(chemin_images_logos ~ entreprise.logo) }}" type="image/png">
+        {% endif %}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('all-styles') }}
+        {% endblock %}
+        <link rel="manifest" href="{{ asset('build/pwa-manifest.json') }}">
+    </head>
+    <body style="background-image: url({{ asset('images/config/fond.jpg') }});">
+
+        {% block body %}
+            {% block header %}
+                <nav class="navbar navbar-expand-lg navbar-dark " id="nav-scroll" style="height:67px; background-color:#152736;">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{{ path('app_home') }}">
+                                {% if entreprise.logo is not empty %}
+                                <img src="{{asset(chemin_images_logos) ~ entreprise.logo}}"   height="55" width="160" alt="image logo">
+                            {% else %}
+                                <img src="{{ asset('images/config/default.jpg') }}"   height="55" alt="image logo">
+                            {% endif %}
+                            {# <span class="fw-bold text-white" style="color: #04244d;">{{entreprise.nomEntreprise}}</span> #}
+                        </a>
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+
+                            <div class="contact-search-container-bottom d-flex justify-content-between align-items-center">
+
+                                {% if not app.user %}
+
+                                    <a class="text-white text-decoration-none d-inline-block p-2" href=" {{ path("app_login") }} ">
+                                        <i class="fa-solid fa-circle-user mx-2"></i>Connexion
+                                    </a>
+                                {% else %}
+                                    <a class="text-white text-decoration-none d-inline-block p-2" href="#">
+                                        <i class="fa-solid fa-circle-user mx-2"></i> {{ app.user.username |ucwords }}
+                                    </a>
+
+                                    <a class="text-white text-decoration-none d-inline-block p-2 text-danger" href=" {{ path("app_logout") }} ">
+                                        <i class="fa-solid fa-circle-user mx-2 text-danger"></i><span class="text-danger fw-bold">Déconnexion</span>
+                                    </a>
+
+                                {% endif %}
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </nav>                
+            {% endblock %}
+            {% block carousel %}
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for banniere in bannieres %}
+
+                            <div class="carousel-item active">
+                                <img src="{{asset(chemin_images_bannieres) ~ banniere.image}}" class="d-block w-100 " alt="banniere {{banniere.id}}">
+                            </div>                            
+                        {% endfor %}                        
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-info bg-opacity-50" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-info bg-opacity-50" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            {% endblock %}
+            {% block main %}
+                <main>
+
+                    {% block produits %}
+                        {% set path = 'app_home'  %}
+                        {% set nbrePages = products.nbrePages %}
+                        {% set pageProductsEncours = products.pageProductsEncours %}
+                        
+                        
+                    {% endblock %}
+
+                   
+
+                    {% block scroll %}
+
+                        <button class="scroll" id="scrollButton" title="Go-to-top" onclick="scrollToTop()">
+                            <i class="fa-solid fa-backward-step fa-rotate-90"></i>
+                        </button>
+                    {% endblock %}
+
+
+                </main>
+            {% endblock %}
+        
+        {% endblock %}   
+        
+        {% block javascripts %}
+            {{ encore_entry_script_tags('all-scripts') }}
+        {% endblock %}
+
+    </body>
+</html>

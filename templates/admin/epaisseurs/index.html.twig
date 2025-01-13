@@ -1,0 +1,56 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}epaisseurs{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center">Liste des epaisseurs</h3>
+            <a class="btn btn-primary" href="{{ path('app_admin_epaisseurs_new') }}">Ajouter une epaisseur</a>
+
+
+            <table class="table table-bordered table-striped table-hover align-middle text-center m-auto">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>épaisseurs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, categorie in categories %}
+                    <tr>
+                        <td>
+                            {{ (key + 1) }}
+                        </td>
+                        <td class="text-start">{{ categorie.nameCategorie }}</td>
+                        <td>
+                            {% for epaisseur in categorie.epaisseurs %}
+                                <a class="btn btn-success" href="{{ path('app_admin_epaisseurs_show', {'id': epaisseur.id}) }}">{{ epaisseur.valeurepaisseur}}</a>{{~ (loop.last ? "" : " - ")}}
+                                
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucune epaisseur trouvée</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

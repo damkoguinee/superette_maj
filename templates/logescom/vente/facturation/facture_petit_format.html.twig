@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}facture{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        
+    </head>
+    <body>
+        <style>
+            @page {
+                margin: 2px;
+            }
+            body{
+                margin: 0px;
+                width: 100%;
+                height:68%;
+                padding:0px;
+            }
+            .ticket{
+                margin:0px;
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;
+                line-height: 10mm;
+                border-collapse: collapse;
+            }
+            
+            .border th {
+                border: 2px solid #CFD1D2;
+                padding: 0px;
+                font-weight: bold;
+                font-size: 35px;
+                color: black;
+                background: white;
+                text-align: right; }
+            .border td {
+                line-height: 10mm;
+                border: 0px solid #CFD1D2;    
+                font-size: 35px;
+                color: black;
+                background: white;
+                text-align: center;}
+            .footer{
+                font-size: 40px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <tbody>
+                {# <tr>
+                    <td colspan="3" style="width:100%; text-align:center;  padding-top: 5px; border: 0px;">
+                        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="400" height="100">
+                    </td>
+                </tr> #}
+                <tr>
+                    <td colspan="3" style="font-weight: bold; font-size: 35px; padding: 5px">
+                       {{lieu_vente.entreprise.nomEntreprise|ucwords}}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3" style="font-size: 35px;">
+                        {{lieu_vente.adresse|ucfirst}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-size: 35px;">
+                    Tél: {{lieu_vente.telephone}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-size: 35px;">
+                    {{lieu_vente.email ? "Email: " ~ lieu_vente.email :""}}
+                    </td>
+                </tr>
+                {# <tr>
+                    <td colspan="3" style="font-size: 35px;">
+                    Gestionnaire: {{lieu_vente.gestionnaire.prenom|ucwords}}
+                    </td>
+                </tr> #}
+            </tbody>
+            <tbody>
+                <tr>
+                    <td colspan="3" height="20"></td>
+                </tr>
+
+                {# <tr>
+                    <td colspan="3" style="font-weight: bold; font-size: 35px;">
+                        {% if facture.typeVente == 'surplace' %}
+                            {{facture.typeVente|ucfirst ~ " " ~ facture.tableCommande}}
+                        {% else %}
+                            {{facture.typeVente}}                            
+                        {% endif %}
+                    </td>
+                </tr> #}
+                
+                <tr>
+                    <td colspan="2" style="font-size: 35px; text-align:left;">
+                    N° cmd: {{facture.numeroFacture}}</td>
+                    <td colspan="1" style="border: 2px solid #CFD1D2; font-size: 40px;">
+                    Ticket N°: {{facture.id}}</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="3" style="font-size: 35px; text-align:left;">
+                    Facturé le: {{facture.dateSaisie|date("d/m/Y à H:i")}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-size: 35px; text-align:left;">
+                    Encaissé par: {{facture.saisiePar.username}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" height="10"></td>
+                </tr>
+            
+            
+                <tr>
+                    <td colspan="3">
+                        <table>
+                            <thead>
+                                
+                                <tr>
+                                    <th style="text-align: center;">Qtité</th>
+                                    <th style="text-align: center;">Désignation</th>
+                                    <th style="text-align: center;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set numero = 0 %}
+                                {% set cumulPrixTotalHt = 0 %}
+                                {% set cumulRemise = 0 %}
+                                {% set cumulTva = 0 %}
+                                {% set cumulTable = 0 %}
+                                {% for key, cmd in commandes %}
+                                    {% set total = cmd.quantite * cmd.prixVente %}
+                                    {% set cumulTable = cumulTable + total %}
+
+                                    <tr>
+                                        <td style="text-align: center;">{{cmd.quantite}}</td>                            
+                                        <td style="text-align: left; width:45%;">{{cmd.product.designation|ucfirst}}</td>                            
+                                        <td style="text-align: right; padding-right: 10px;">{{total|number_format(0,',',' ')}}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="3" height="20"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" rowspan="4" style="padding: 1px; text-align: left; font-size:35px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;" class="no-border">Total facture </td>
+                                    <td style="text-align:right; padding-right: 15px;">{{cumulTable|number_format(0,',',' ')}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;" class="no-border">Remise </td>
+                                    <td style="text-align:right; padding-right: 15px;">{{facture.montantRemise|number_format(0,',',' ')}} %</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right;" class="no-border">Total Net TTC </td>
+                                    <td style="text-align:right; padding-right: 15px;">{{facture.totalFacture|number_format(0,',',' ')}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align:left; border:0px; padding-top:20px;" ></td>
+                </tr>
+
+                {% for mode in mouvements_caisse %}
+                    <tr>
+                        <td colspan="3" style="text-align:left; border:0px;" >{{mode.modePaie.designation|ucfirst ~ ": " ~ mode.montant|number_format(0,',',' ')}}</td>
+                    </tr>                                    
+                {% endfor %}
+                
+                <tr>
+                    <td colspan="3" style="font-size:28px; padding-top: 10px; font-style: italic;">
+                        ***{{lieu_vente.entreprise.nomEntreprise}} vous souhaite une excellente Soirée***
+                    </td>
+                </tr>
+                <tr>
+
+                    <td colspan="3" style="font-size:28px; padding-top: 2px; font-style: italic;">
+            
+                      *********************A Bientôt *************************
+                    </td>
+                  </tr>
+            </tbody>
+            {# <footer style="position: fixed;bottom: 0; width: 100%;text-align: right; font-family:italic; font-size: 10px;">
+                <p>Facture imprimée par  : {{app.user.prenom | ucwords ~ " " ~ app.user.nom | strtoupper ~ " le " ~ "now"|date("d/m/Y à H:i")}}</p>
+            </footer> #}
+        </table>
+        
+    </body>
+</html>

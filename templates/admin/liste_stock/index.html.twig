@@ -1,0 +1,43 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}ListeStock index{% endblock %}
+
+{% block body %}
+    <h1>ListeStock index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>NomStock</th>
+                <th>Adresse</th>
+                <th>Surface</th>
+                <th>NbrePieces</th>
+                <th>Type</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for liste_stock in liste_stocks %}
+            <tr>
+                <td>{{ liste_stock.id }}</td>
+                <td>{{ liste_stock.nomStock }}</td>
+                <td>{{ liste_stock.adresse }}</td>
+                <td>{{ liste_stock.surface }}</td>
+                <td>{{ liste_stock.nbrePieces }}</td>
+                <td>{{ liste_stock.type }}</td>
+                <td>
+                    <a href="{{ path('app_admin_liste_stock_show', {'id': liste_stock.id}) }}">show</a>
+                    <a href="{{ path('app_admin_liste_stock_edit', {'id': liste_stock.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_liste_stock_new') }}">Create new</a>
+{% endblock %}

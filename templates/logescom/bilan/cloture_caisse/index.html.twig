@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClotureCaisse index{% endblock %}
+
+{% block body %}
+    <h1>ClotureCaisse index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Journee</th>
+                <th>MontantTheo</th>
+                <th>MontantReel</th>
+                <th>DateSaisie</th>
+                <th>Difference</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cloture_caisse in cloture_caisses %}
+            <tr>
+                <td>{{ cloture_caisse.id }}</td>
+                <td>{{ cloture_caisse.journee ? cloture_caisse.journee|date('Y-m-d') : '' }}</td>
+                <td>{{ cloture_caisse.montantTheo }}</td>
+                <td>{{ cloture_caisse.montantReel }}</td>
+                <td>{{ cloture_caisse.dateSaisie ? cloture_caisse.dateSaisie|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ cloture_caisse.difference }}</td>
+                <td>
+                    <a href="{{ path('app_nhema_caisse_cloture_caisse_show', {'id': cloture_caisse.id}) }}">show</a>
+                    <a href="{{ path('app_nhema_caisse_cloture_caisse_edit', {'id': cloture_caisse.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_nhema_caisse_cloture_caisse_new') }}">Create new</a>
+{% endblock %}

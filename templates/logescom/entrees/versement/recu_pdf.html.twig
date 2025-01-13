@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}pdf{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}
+			{# <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"> #}
+			{# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
+		{% endblock %}
+
+        {% block javascripts %}
+            
+        {% endblock %}
+    </head>
+    <body>
+        <style>
+            body{
+                margin: 0px;
+                width: 100%;
+                height:68%;
+                padding:0px;
+            }
+            table {
+                margin:auto;
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;    
+                line-height: 5mm;
+            }
+            
+            .border th {
+                border: 2px solid #CFD1D2;
+                padding: 5px;
+                font-size: 16px;
+                color: black;
+                font-weight: normal;
+                background: white;
+                text-align: center; }
+            .border td {
+                line-height: 5mm;
+                border: 0px solid #CFD1D2;    
+                font-size: 14px;
+                color: black;
+                background: white;
+                text-align: center;}
+            .footer{
+                font-size: 18px;
+                font-style: italic;
+            }
+            .footer{
+                font-size: 18px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <tbody>
+                <tr>
+                    <th colspan="4" style="text-align:center; font-weight: bold; font-size: 18px; padding-top: 5px; border: 0px;">
+                        {# <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="380" height="100"> #}
+                        {{lieu_vente.entreprise.nomEntreprise}}
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:center; border: 0px;">{{lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement}}</td>
+                </tr>
+        
+                <tr>
+                    <td colspan="4" style="text-align:center; border: 0px; padding-bottom:20px;">{{lieu_vente.adresse ~ " Tél:"~ lieu_vente.telephone}}</td>
+                </tr>
+            </tbody>
+            <thead style="background-color:#f2f2f2; width:100%; font-weight:bold;">
+                <tr>
+                    <th rowspan="3" style="text-align:left; font-weight: 800;">
+                        Reçu de Versement<br><br>
+                        <span>{{versement.client.prenom|ucwords ~ " " ~ versement.client.nom|strtoupper}}</span><br>
+                        <span>Téléphone: {{versement.client.telephone}}</span><br>
+                        <span>Adresse: {{versement.client.adresse | ucfirst}}</span>
+                    </th>
+                    <th>Reçu N° <span>{{versement.reference | strtoupper}}</span></th>
+                    <th>Mode de Paie <span>{{versement.modePaie.designation| ucfirst}}</span></th>
+                    <th>Date <span>{{versement.dateVersement| date("d/m/Y")}}</span></th>
+                </tr>
+                <tr>
+                    <th>Taux<br><span>{{versement.taux |number_format(2,',',' ')}}</span></th>
+                    <th>Montant Versé <br><span style="font-weight:bold;">{{ versement.devise.nomDevise == 'gnf' ? versement.montant|number_format(0,',',' ') : versement.montant|number_format(2,',',' ')~ " " ~ versement.devise.nomDevise|strtoupper }}</span></th>
+                    <th>Montant Total <br><span style="font-weight:bold;">{{ (versement.montant * versement.taux)|number_format(0,',',' ') }}</span></th>
+                </tr>
+                <tr>
+                    <th colspan="2">Motif <br><span>{{ versement.commentaire|ucfirst }}</span></th>
+                    <th>Compte de dépôt <br><span>{{ versement.compte.designation|ucfirst }}</span></th>
+                </tr>
+
+                <tr>
+                    <th colspan="4" style="font-weight:bold;">Ancien Solde 
+                    {% for solde in ancien_solde %}
+                        {% if solde.montant > 0 %}
+                            <label style="padding-right: 30px;">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? solde.montant |number_format(0,',',' ') : solde.montant |number_format(2,',',' ') }}</label>
+                        {% else %}
+
+                            <label style="padding-right: 30px;">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? (- solde.montant) |number_format(0,',',' ') : (- solde.montant) |number_format(2,',',' ') }}</label>
+                            
+                        {% endif %}                    
+                    {% endfor %}
+                    </th>
+                </tr>
+
+                <tr>
+                    <th colspan="4" style="padding:10px 0px 10px 0px; font-weight:bold;">Solde de vos Comptes à la date du {{ "now"|date("d/m/Y H:i") }}
+                        {% for solde in solde_collaborateur %}
+
+                            {% if solde.montant > 0 %}
+                                <label style="padding-right: 30px;">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? solde.montant |number_format(0,',',' ') : solde.montant |number_format(2,',',' ') }}</label>
+                            {% else %}
+
+                                <label style="padding-right: 30px;">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? (- solde.montant) |number_format(0,',',' ') : (- solde.montant) |number_format(2,',',' ') }}</label>
+                                
+                            {% endif %}
+
+                            
+                        {% endfor %}
+                    </th>
+                </tr>
+
+                <tr>
+                    <th colspan="4">Réçu saisi par : {{versement.traitePar.id ~ " le " ~ versement.dateSaisie|date("d/m/Y à H:i")}}
+                    </th>
+                </tr>
+
+                <tr>
+                    <th colspan="4">
+                        Madame/Monsieur, à la date du {{"now"|date("d/m/Y")}},
+                        {% for key, solde in solde_collaborateur %}
+                            {% if key == 0 %}
+                            
+                                {% if solde.montant > 0 %}
+                                    nous vous devons <span style="font-weight:bold;">{{solde.devise == 'gnf' ? solde.montant |number_format(0,',',' ') : solde.montant |number_format(2,',',' ') }} {{solde.devise|strtoupper}}</span>
+                                {% else %}
+                                        
+                                    vous nous devez <span style="font-weight:bold;">{{solde.devise == 'gnf' ? (- solde.montant) |number_format(0,',',' ') : ( - solde.montant) |number_format(2,',',' ') }} {{solde.devise|strtoupper}}</span>
+                                    
+                                {% endif %}
+                
+                            {% endif %}
+                        {% endfor %}
+                        <p>************** {{lieu_vente.entreprise.nomEntreprise |ucwords}} vous souhaite une excellente journée**************</p>
+                    </th>
+                </tr>
+
+                <tr>
+                    <th style="border:0px;" colspan="2">{{lieu_vente.entreprise.nomEntreprise|ucwords}}</th>
+                    <th style="border:0px;" colspan="2">Le Collaborateur</th>
+                </tr>
+
+                <tr>
+                <td colspan="2" style="padding-top: 70px; border:0px;"></td>
+                <td colspan="2" style="padding-top: 70px;  border:0px;">{{versement.client.prenom|ucwords ~ " " ~ versement.client.nom|strtoupper}}</td>
+              </tr>
+
+            </thead> 
+            <footer style="position: fixed;bottom: 0; width: 100%;text-align: right; font-style: italic; background-color: #f2f2f2;padding: 10px;">
+                <p>Réçu imprimé par {{app.user.id ~ " le " ~ "now"|date("d/m/Y à H:i")}}</p>
+            </footer>
+        </table>
+        
+    </body>
+</html>

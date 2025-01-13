@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}pdf{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+			{# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
+		{% endblock %}
+
+        {% block javascripts %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		    <script src="https://kit.fontawesome.com/8df11ad090.js" crossorigin="anonymous"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <style>
+            body{
+            margin: 0px;
+            width: 100%;
+            height:68%;
+            padding:0px;}
+            .ticket{
+                margin:0px;
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;
+                border-collapse: collapse;
+            }
+            
+            .border th {
+                border: 1px solid black;
+                padding: 0px;
+                font-size: 16px;
+                color: black;
+                background: white;
+                text-align: right;
+            }
+            .border td {
+                border: 1px solid black;
+                padding: 0px;    
+                font-size: 14px;
+                color: black;
+                background: white;
+                text-align: center;
+            }
+            .footer{
+                font-size: 18px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <tr>
+                <td colspan="3" style="border: 0px;">
+                    <table>
+                        <thead>
+                            {% if config is empty %}
+                                {% set color = 'white' %}
+                                {% set backgroundColor = '#33C4FF' %}
+                            {% else %}
+                                {% set color = config.color %}
+                                {% set backgroundColor = config.backgroundColor %}
+                            {% endif %}
+
+
+                            {% if config is empty %}
+                                {{ include("_common/_entete_facture.html.twig") }}
+                            {% elseif config.formatFacture == 'ancien' %}
+                                {{ include("_common/_entete_facture_ancien.html.twig") }}
+                            {% else %}
+                                {{ include("_common/_entete_facture.html.twig") }}
+                                
+                            {% endif %} 
+                            <tr>
+                                <th colspan="4" height="30" style="border:0px solid white;"></th>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border:0px;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th style=" background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{backgroundColor}};">N°</th>
+                                                <th style=" background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{backgroundColor}};">Désignation</th>
+                                                <th style=" background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 1px solid {{backgroundColor}};">Qtite</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% set numero = 0 %}
+                                            {% set cumulPrixTotalHt = 0 %}
+                                            {% set cumulRemise = 0 %}
+                                            {% set cumulTva = 0 %}
+                                            {% for key, cmd in commandes.data %}
+
+                                                {% set prixTotalHt = ((cmd.commande.quantite * cmd.commande.prixVente) - (cmd.commande.quantite * cmd.commande.remise ))  %}
+
+                                                {% set cumulRemise = cumulRemise + (cmd.commande.quantite * cmd.commande.remise ) %}
+
+                                                {% set montantTva = cmd.commande.quantite * (cmd.commande.prixVente * cmd.commande.tva) %}
+
+                                                {% set cumulTva = cumulTva + montantTva %}
+
+                                                {% set cumulPrixTotalHt = cumulPrixTotalHt + prixTotalHt %}
+                                                {% set numero = numero + 1 %}
+                                                {% if key == 50 or key == 77 %}
+                                                    <tr style="page-break-after: always;">
+                                                {% else %}
+                                                    <tr>
+                                                {% endif %}
+                                                    <td height="25" style="border:0.6px solid {{backgroundColor}}; text-center">{{ numero }}</td>
+                                                    <td style="border:0.6px solid {{backgroundColor}}; text-align:left;">{{cmd.commande.product.designation|ucfirst}}</td>
+                                                    <td style="border:0.6px solid {{backgroundColor}};">{{cmd.commande.quantite}}</td>
+                                                </tr>
+                                                
+                                            {% endfor %}
+                                            {% if numero > 10 %}
+                                                {% set height = 10  %}
+                                            {% else %}
+                                                {% set height = 120 - numero %}
+                                            {% endif %}
+
+                                            <tr>
+                                                <th colspan="3" height="20" style="border:0px solid white;"></th>
+                                            </tr>
+
+                                            <tr>
+                                                <th style="border:0px; text-align:left;" colspan="2">Le Gestionnaire</th>
+                                                <th style="border:0px; text-align:center;" colspan="1">Le Client</th>
+                                            </tr>
+                            
+                                            <tr>
+                                                <td colspan="2" style="padding-top: 70px; border:0px; text-align:left;">{{facturation.saisiePar.prenom | ucwords ~ " " ~ facturation.saisiePar.nom | strtoupper }}</td>
+                                                <td colspan="1" style="padding-top: 70px;  border:1px; text-align:center;">{{facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom|strtoupper}}</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                
+                        </thead> 
+                    </table>
+                </td>
+            <tr>   
+            <footer style="position: fixed;bottom: 0; width: 100%;text-align: right; font-family:italic; font-size: 10px;">
+                <p>Bon imprimé par  : {{app.user.prenom | ucwords ~ " " ~ app.user.nom | strtoupper ~ " le " ~ "now"|date("d/m/Y à H:i")}}</p>
+            </footer>
+        </table>
+        
+    </body>
+</html>

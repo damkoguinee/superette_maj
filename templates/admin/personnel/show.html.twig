@@ -1,0 +1,100 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}détail du personnel{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    {% if personnel.photoIdentite %}
+                        <tr>
+                            <th colspan="2" class="bg-info">
+                                <div class="card m-auto" style="width: 8rem;">
+                                    <img src="{{asset(chemin_photo_personnel) }}{{personnel.photoIdentite}}" class="card-img-top" alt="photo personnel">
+                                    {# <div class="card-body">
+                                        <h5 class="card-title">Card title</h5>
+                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    </div> #}
+                                </div>
+                            </th>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Prénom & Nom</th>
+                        <td>{{ personnel.user.prenom|ucwords ~ " " ~ personnel.user.nom|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Statut</th>
+                        <td class="fw-bold text-{{ personnel.user.statut ? 'success' : 'danger' }}"
+                    >{{ personnel.user.statut|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fonction</th>
+                        <td>{{ personnel.fonction }}</td>
+                    </tr>
+                    <tr>
+                        <th>Taux Horaire</th>
+                        <td>{{ personnel.tauxHoraire|number_format(0,',',' ') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Salaire de Base</th>
+                        <td>{{ personnel.salaireBase|number_format(0,',',' ') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone</th>
+                        <td>{{ personnel.user.telephone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ personnel.user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Rattachement</th>
+                        <td>{{ personnel.user.lieuVente.adresse|ucfirst }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Identifiant</th>
+                        <td>{{ personnel.user.username }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Niveau d'autorisation</th>
+                        <td>{{  personnel.user.roles ?  personnel.user|autorisations : '' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Adresse</th>
+                        <td>{{ personnel.user.adresse|ucfirst ~ " / " ~ personnel.user.ville|ucfirst }}  </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between my-4">
+
+                <a class="btn btn-light" href="{{ path('app_admin_personnel_index') }}">Retour</a>
+
+                <a class="btn btn-warning" href="{{ path('app_admin_personnel_edit', {'id': personnel.user.id}) }}"><i class="fa fa-edit"></i></a>
+                {% if is_granted("ROLE_SUPPRESSION") and mouvement is empty and mouvement_caisse is empty and mouvement_product is empty %}
+                    {{ include('admin/personnel/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

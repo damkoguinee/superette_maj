@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Proformat{% endblock %}
+
+{% block body %}
+    <h1>Create new Proformat</h1>
+
+    {{ include('logescom/vente/proformat/_form.html.twig') }}
+
+    <a href="{{ path('app_logescom_vente_proformat_index') }}">back to list</a>
+{% endblock %}

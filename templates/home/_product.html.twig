@@ -1,0 +1,22 @@
+{# <div>
+    <p><strong>Koulamatco </strong>vous propose des tubes carrés de différentes dimensions, épaisseurs et origines. Vous pouvez choisir entre des barres de fer entières de 6 mètres de long, des barres coupées à des longueurs standards de 0,5 à 5 mètres ou coupées sur mesure, à votre dimension. Le tube fer carré peut être percé, vissé ou encore soudé pour réaliser diverses structures métalliques. Nos tubes carrés ont été laminés à chaud puis finis à froid pour des dimensions précises et une grande résistance.</p>
+</div> #}
+
+<div class="section-product-ventes" id="products">
+    {% for product in products.data %}
+        <div class="card img-product align-items-center" style="width: 14rem; height: 16rem;">
+            <a class="p-1 text-center" href="#contact" style="margin:auto;">
+            {% for image in product.categorie.imgProduit %}
+                <img class="img-logo" src="{{asset(chemin_images_product) ~ image}}" alt="image produit">
+            {% endfor %}
+                <div class="card-body">
+                    <h7 class="card-title text-center  fs-7 fw-bold">{{product.designation | ucfirst}}</h7>
+                    <div class=""> 
+                        <div class="text-warning fw-bold">À partir de {{ product.prixVente | number_format(0,',',' ') }} GNF</div>
+                    </div>
+                    <div class="text-success text-center fw-bold">Disponible</div>
+                </div>                                    
+            </a>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,26 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Ajout bannière{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center">Ajouter une nouvelle bannière</h3>
+
+            {{ include('admin/bannieres_entreprise/_form.html.twig') }}
+
+            <a href="{{ path('app_admin_bannieres_entreprise_index') }}">Retour</a>
+        </div>
+    </div>
+{% endblock %}

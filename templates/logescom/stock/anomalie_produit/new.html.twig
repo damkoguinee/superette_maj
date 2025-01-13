@@ -1,0 +1,87 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_inv") | url_encode %}
+
+{% block title %}anomalie{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+
+        <div class="col-sm-12 col-md-10" >
+            {# {% include "_common/_messages_flash.html.twig" %} #}
+            <h3 class="text-center">Gestion des anomalies</h3>
+            {# {{ include('logescom/stock/anomalie_produit/_form.html.twig') }} #}
+            
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th colspan="8">
+                            <div class="d-flex justify-content-between">
+                                <p>Liste des anomalies</p>
+                                <a href="" class="btn btn-primary">Ajouter une anomalie</a>
+                            </div>
+                        </th>
+                    </tr>
+                    
+                    <tr>
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Stock</th>
+                        <th>Quantite</th>
+                        <th>P. Revient</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# {{form_errors(form)}}
+                    {{ form_start(form)}}
+                        <tr>
+                            <th colspan="4">{{form_widget(form.product)}}</th>
+                            <th>{{form_widget(form.stock)}}</th>
+                            <th>{{form_widget(form.quantite)}}</th>
+                            <th></th>
+                            <th class="text-center"><button type="submit" class="btn btn-danger">Ajouter</button></th>
+                        </tr>                        
+                    {{form_end(form)}} #}
+
+                    {% for key, anomalie_produit in anomalie_produits %}
+                        <tr>
+                            <td class="text-center">{{ (key + 1)}}</td>
+                            <td class="text-center">{{ anomalie_produit.dateAnomalie ? anomalie_produit.dateAnomalie|date('d/m/Y') : '' }}</td>
+                            <td>{{anomalie_produit.product.reference | ucfirst}}</td>
+                            <td>{{anomalie_produit.product.designation | ucfirst}}</td>
+                            <td>{{anomalie_produit.stock.nomStock | ucfirst}}</td>
+                            <td class="text-center">{{ anomalie_produit.quantite }}</td>
+                            <td class="text-end">{{ anomalie_produit.prixRevient|number_format(0,',',' ') }}</td>
+                            <td class="text-center">
+                                <a class="btn btn-success" href="{{ path('app_logescom_stock_anomalie_produit_show', {'id': anomalie_produit.id}) }}"><i class="fa fa-eye"></i></a>
+                                {# <a class="btn btn-warning" href="{{ path('app_logescom_stock_anomalie_produit_edit', {'id': anomalie_produit.id}) }}"><i class="fa fa-edit"></i></a> #}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">Aucune anomalie trouvée</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {# <a class="btn btn-light" href="{{ path('app_logescom_stock_anomalie_produit_new', {lieu_vente : lieu_vente.id}) }}">Retour</a> #}
+
+        </div>
+    </div>
+{% endblock %}

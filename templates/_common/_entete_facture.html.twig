@@ -1,0 +1,103 @@
+<tr>
+    {# <td style="width:15%; text-align:center;  padding-top: 5px; border: 0px;">
+        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="180" height="100">
+    </td>                 #}
+    <td colspan='2' style="width:45%; text-align:left; border: 0px;">
+        <label style="color:{{backgroundColor}}; text-align:center; font-weight: bold; font-size: 18px; " for="">{{lieu_vente.entreprise.nomEntreprise}}</label><br/>
+        <label style="color:{{backgroundColor}};">{{lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement}}</label><br/>
+        <span>{{lieu_vente.adresse|ucfirst}}</span><br/>
+        <span>{{lieu_vente.telephone}}</span><br/>
+        <span>{{lieu_vente.email}}</span><br/>
+        {# <span style="color:red;">gestionnaire: </span>{{lieu_vente.gestionnaire.prenom|ucwords}}</span> #}
+        
+    </td>
+    <td colspan="2" style="text-align:center; border: 0px;">
+        <table style='border: 2px solid {{backgroundColor}}; width:100%;'>
+            <thead>
+                <tr>
+                    {# <th style="background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 2px solid {{backgroundColor}};">Informations de la facture</th> #}
+                </tr>
+            </thead>
+            <tbody style="text-align:left;">
+                {% if facturation.proformat is not empty %}
+                    <tr>
+                        <td style="text-align:left; border:0px;" >N° Proformat: {{facturation.proformat.numeroProformat|strtoupper}}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td style="text-align:left; border:0px;" >N° de la facture: {{facturation.numeroFacture|strtoupper}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left; border:0px;" >Date d'émission: {{facturation.dateFacturation|date("d/m/Y à H:i")}}</td>
+                </tr>
+                {% if facturation.dateAlerte %}
+                    <tr>
+                        <td style="text-align:left; border:0px;" >À payer avant le: {{facturation.dateAlerte|date("d/m/Y")}}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td style="text-align:left; border:0px;" >Etat Livraison: {{facturation.etatLivraison|ucfirst}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left; border:0px;" >Saisie par: {{facturation.saisiePar.id|ucwords}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
+
+<tr>
+    <th colspan="4" height="20" style="border:0px solid white;"></th>
+</tr>
+<tr>
+    <td colspan="1" style=" text-align:center; font-size: 18px; padding-top: 5px; border: 0px;">
+        {% if caisses_banque is not empty %}
+        
+            <table style='border: 2px solid {{backgroundColor}};'>
+                <thead>
+                    <tr>
+                        <th style="background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 2px solid {{backgroundColor}};">Liste des Banques</th>
+                    </tr>
+                </thead>
+                <tbody style="text-align:left;">
+                    {% for banque in caisses_banque %}
+                        <tr>
+                            <td style="text-align:left; border:0px;" >{{banque.designation ~ ": " ~ banque.numeroCompte}}</td>
+                        </tr>                                    
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </td>
+
+    <td colspan="3" style="text-align:center; font-size: 18px; padding-top: 5px; border: 0px;">
+        <table style='border: 2px solid {{backgroundColor}}; margin-left:100px; width:80%'>
+            <thead>
+                <tr>
+                    <th style="background-color:{{backgroundColor}}; color:{{color}}; text-align:center; border: 2px solid {{backgroundColor}};">Adresse de facturation</th>
+                </tr>
+            </thead>
+            <tbody style="text-align:left;">
+                {% if client.societe is defined and client.societe is not empty %}
+                    <tr>
+                        <td style="text-align:left; border:0px;" >Société: {{client.societe|ucwords}}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td style="text-align:left; border:0px;" >Représentant: {{facturation.client ? facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom|strtoupper : facturation.nomClientCash|ucfirst}}</td>
+                </tr>
+                {% if facturation.client.telephone is defined %}
+                    <tr>
+                        <td style="text-align:left; border:0px;" >Télephone: {{facturation.client.telephone}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; border:0px;" >Télephone: {{facturation.client.email}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; border:0px;" >Adresse: {{facturation.client.adresse|ucwords}}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </td>
+</tr>

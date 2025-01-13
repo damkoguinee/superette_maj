@@ -1,0 +1,156 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}liste des salaires{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+    <div class="row my-2">
+        {% include "_common/_nav_personnel.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            {% if app.request.query.has('periode') %}
+                {% set periode = app.request.query.get('periode') %}
+            
+            {% else %}
+                {% set periode = "now"|date("Y-m-d") %}
+
+            {% endif %}
+            <form class="form">
+                <div class="row bg-info p-2 mx-2">
+                    <div class="col-3"><label for="" class="form-label">Selectionnez la période</label></div>
+                    <div class="col-3"><input type="date" name="periode" value="{{periode}}" max="{{ "now"|date("Y-m-d") }}" class="form-control" onChange="this.form.submit()"></div>
+                </div>
+            </form>
+            {% if periode is not empty %}
+                <div class="row" style="overflow: auto;">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+
+                        <thead class="sticky-top bg-light text-center">
+                            <tr>
+                                <th colspan="12" class="text-center">
+                                Paiement des salaires pour la période de {{ periode | date("m/Y")}}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>N°</th>
+                                <th class="text-nowrap">Prénom & Nom</th>
+                                <th class="text-nowrap">Salaire Brut</th>
+                                <th class="text-nowrap">Taux Horaire</th>
+                                <th class="text-nowrap">Abs</th>
+                                <th class="text-nowrap">Prime</th>
+                                <th class="text-nowrap">Avance/Salaire</th>
+                                <th class="text-nowrap text-success fw-bold">Salaire Net</th>
+                                <th class="text-nowrap">Mode de Paie</th>
+                                <th class="text-nowrap">Commentaire</th>
+                                <th class="text-nowrap">Caisse</th>
+                                <th class="text-nowrap">actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            {% set cumulBrut = 0 %}
+                            {% set cumulAbsences = 0 %}
+                            {% set cumulHeures = 0 %}
+                            {% set cumulPrimes = 0 %}
+                            {% set cumulAvances = 0 %}
+                            {% set cumulCotisations = 0 %}
+                            {% set cumulNet = 0 %}
+
+                            {% for key, paiementInfo in paiementsInfos %}
+                            {# {{dump(paiementInfo)}} #}
+
+                                {% set salaireBrut = paiementInfo.salaireBase %}
+                                {% set prime =  paiementInfo.montant_prime %}
+                                {% set avance = paiementInfo.montant_avance %}
+                                {% set cotisation = 0 %}
+                                {% set absence = paiementInfo.personnel.tauxHoraire * paiementInfo.absences %}
+                                {% set heures = paiementInfo.absences %}
+                                
+                                {% set salaireNet = ((salaireBrut + prime) + (paiementInfo.personnel.tauxHoraire * paiementInfo.absences) - ( avance + cotisation ) ) %}
+
+                                {% set cumulBrut = cumulBrut + salaireBrut %}
+                                {% set cumulAbsences = cumulAbsences + absence %}
+                                {% set cumulPrimes = cumulPrimes + prime %}
+                                {% set cumulAvances = cumulAvances + avance %}
+                                {% set cumulCotisations = cumulCotisations + cotisation %}
+                                {% set cumulNet = cumulNet + salaireNet %}
+                                {% set cumulHeures = cumulHeures + heures %} 
+
+
+                                <form class="form">
+                                    <tr>
+                                        <td class="text-nowrap">{{(key +1 )}}</td>
+                                        <td class="text-nowrap text-start" class="text-start">{{ paiementInfo.personnel.user.prenom | ucwords ~ " " ~ paiementInfo.personnel.user.nom | strtoupper  }}</td>
+                                        <td class="text-nowrap">{{salaireBrut | number_format(0,',',' ')}}</td>
+                                        <td class="text-nowrap">{{paiementInfo.personnel.tauxHoraire | number_format(0,',',' ')}}</td>
+                                        <td class="text-nowrap">{{paiementInfo.absences}}h</td>
+                                        <td class="text-nowrap">{{prime ? prime | number_format(0,',',' ') : '0'}}</td>
+                                        <td class="text-nowrap">{{avance ? avance | number_format(0,',',' ') : '0'}}</td>
+                                        <td class="text-nowrap text-success fw-bold">{{salaireNet | number_format(0,',',' ') }}</td>
+
+                                        <td class="text-nowrap">
+                                            <select name="modePaie" required id="" class="form-select">
+                                                <option value=""></option>
+                                                {% for modePaie in modePaies %}
+                                                    <option value="{{ modePaie.id}}">{{ modePaie.designation | ucwords }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="periode" value="{{ periode }}" class="form-control">
+                                            <input type="hidden" name="personnel" value="{{ paiementInfo.personnel.user.id }}" class="form-control">
+                                            <input type="hidden" name="salaireBrut" value="{{ salaireBrut }}" class="form-control">
+                                            <input type="hidden" name="prime" value="{{ prime }}" class="form-control">
+                                            <input type="hidden" name="avance" value="{{ avance }}" class="form-control">
+                                            <input type="hidden" name="cotisation" value="{{ cotisation }}" class="form-control">
+                                            <input type="hidden" name="heures" value="{{ paiementInfo.absences }}" class="form-control">
+                                            <input type="hidden" name="salaireNet" value="{{ salaireNet }}" class="form-control">
+
+                                        </td>
+                                        <td><input type="text" name="commentaire" class="form-control"></td>
+                                        <td>
+                                            <select name="compte" required id="" class="form-select">
+                                                <option value=""></option>
+                                                {% for compte in comptes %}
+                                                    <option value="{{ compte.id}}">{{ compte.designation | ucwords }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td><button class="btn btn-primary" onClick="alerteConfirmation()" >Valider</button></td>
+                                    </tr>
+                                </form>
+                                
+                                
+                            {% endfor %}
+                        </tbody>
+                        {# <tfoot>
+                            <th colspan="3">Totaux</th>
+                            <th class="text-nowrap">{{cumulBrut | number_format(0,',',' ')}}</th>
+                            <th class="text-nowrap text-center" colspan="3">{{cumulHeures ~ "h / " ~ cumulAbsences | number_format(0,',',' ')}}</th>
+                            <th class="text-nowrap">{{cumulPrimes | number_format(0,',',' ')}}</th>
+                            <th class="text-nowrap">{{cumulAvances | number_format(0,',',' ')}}</th>
+                            <th class="text-nowrap">{{cumulCotisations | number_format(0,',',' ')}}</th>
+                            <th class="text-nowrap text-success fw-bold">{{cumulNet | number_format(0,',',' ')}}</th>
+                        </tfoot> #}
+                    </table>
+                </div>
+            {% else %}
+                {# <div class="alert alert-info">Selectionnez le periode</div> #}
+            {% endif %}
+            <a  class="btn btn-light my-4" href="{{ path('app_logescom_personnel_paiement_salaire_personnel_index' , {lieu_vente : lieu_vente.id}) }}">Retour</a>
+
+        </div>
+    </div>
+
+{% endblock %}

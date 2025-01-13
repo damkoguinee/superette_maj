@@ -1,0 +1,124 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}traitement des alertes{% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel" >
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+        {{ include("_common/_messages_flash.html.twig") }}
+
+
+        <div class="bg-secondary py-2 d-flex justify-content-center align-items-center ">
+            {% for key, data in stockData %}
+                {% set alertClass = '' %}
+                {% if key == 'perimé' %}
+                    {% set alertClass = 'alert-danger' %}
+                    {% set alert = 'perimé' %}
+                {% elseif key == 'dans 1 semaine' %}
+                    {% set alertClass = 'alert-warning' %}
+                    {% set alert = 1 %}
+                {% elseif key == 'dans 2 semaines' %}
+                    {% set alertClass = 'alert-primary' %}
+                    {% set alert = 2 %}
+
+                {% elseif key == 'dans 3 semaines' %}
+                    {% set alertClass = 'alert-info' %}
+                    {% set alert = 3 %}
+                {% elseif key == 'dans 4 semaines' %}
+                    {% set alertClass = 'alert-light' %}
+                    {% set alert = 4 %}
+
+                {% elseif key == 'dans 6 semaines' %}
+                    {% set alertClass = 'alert-success' %}
+                    {% set alert = 6 %}
+
+                {% endif %}
+                {% if data|length is not empty and data|length != 0  %}
+                    <div class="alert {{ alertClass }} m-2 p-2">
+                        <a class="btn " href="{{path('app_logescom_home_alert', {id : lieu_vente.id, alert : alert} )}}">{{ key }}: {{ data|length }} produit(s)</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="row">
+
+        <table class="table table-bordered table-striped table-hover align-middle">
+        <thead class="sticky-top bg-light text-center">
+            <tr>
+                <th colspan="11" class="text-center bg-info text-white">
+                    Liste des produits
+                </th>
+            </tr>
+            <tr>
+                <th class="bg-info text-white">N°</th>
+                <th class="bg-info text-white">Désignation</th>
+                <th class="bg-info text-white">Quantité</th>
+                <th class="bg-info text-white">Péremption</th>
+                {% if alertDate == 'perimé' %}
+                    <th class="bg-info text-white">Retirer</th>
+                {% endif %}
+
+                <th class="bg-info text-white">Nouvelle date</th>
+                <th class="bg-info text-white">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categorie, produits in filteredStocks %}
+                <!-- Affichage du nom de la catégorie -->
+                <tr class="table-secondary">
+                    <td colspan="7" class="text-center">
+                        <strong>{{ categorie }}</strong>
+                    </td>
+                </tr>
+    
+                <!-- Boucle pour les produits de cette catégorie -->
+                {% for  stock in produits %}
+                    <form action="{{path('app_logescom_home_alert_traitement', {'id' : lieu_vente.id, 'stock' : stock.id})}}">
+                        <tr>
+                            <td class="text-center">{{ loop.index }}</td>
+                            <td>{{ stock.products.getDesignation() }}</td>
+                            <td class="text-center">{{ stock.quantite }}</td>
+                            <td class="text-center">{{ stock.datePeremption|date('d/m/Y') }}</td>
+    
+                            {% if alertDate == 'perimé' %}
+                                <td class="text-center">
+                                    <input type="number" name="qtite" class="form-control">
+                                </td>
+                            {% endif %}
+                            <td class="text-center">
+                                <input type="date" name="date" min="{{ 'now'|date('Y-m-d') }}" class="form-control">
+                            </td>
+
+                            <td class="text-center">
+                                {% if alertDate == 'perimé' %}
+                                    <button type="submit" class="btn btn-danger">Retirer</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-success">Ajuster</button>
+                                    
+                                {% endif %}
+                            </td>
+                            
+                        </tr>
+                    </form>
+                {% else %}
+                    <tr>
+                        <td colspan="11" class="text-center">Aucun produit trouvé dans cette catégorie</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+            
+        </div>
+            
+        
+    </div>
+{% endblock %}
+

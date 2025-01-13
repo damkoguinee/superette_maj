@@ -1,0 +1,72 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}categorie{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center mt-2">Liste des Catégories</h3>
+            <a class="btn btn-primary" href="{{ path('app_admin_categorie_new') }}">Ajouter une catégorie</a>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th>N°</th>
+                        <th>Nom de la catégorie</th>
+                        <th>Couverture</th>
+                        <th>Img Produit</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, categorie in categories %}
+                    <tr>
+                        <td class="text-center">{{key+1}}</td>
+
+                        <td>{{ categorie.nameCategorie }}</td>
+
+                        <td class="text-center">
+                            {% if categorie.couverture %}                   
+                                <img src="{{asset(chemin_images_categories) ~ categorie.couverture}}" alt="image {{ categorie.nameCategorie }}" class="miniature">
+
+                            {% else %}
+                                <img alt="image {{ categorie.nameCategorie }}" class="miniature">
+                            {% endif %} 
+                        </td>
+                        <td class="text-center">
+                            {% if categorie.imgProduit is not empty %}
+                                {% for image in categorie.imgProduit %}
+                                    <img src="{{ asset(chemin_images_product ~ image) }}" alt="image {{ categorie.nameCategorie }}" class="miniature">
+                                {% endfor %}
+                            {% else %}
+                                <img alt="Aucune image" class="miniature">
+                            {% endif %}
+                        </td>
+                            
+                        <td class="text-center">
+                            <a class="btn btn-success" href="{{ path('app_admin_categorie_show', {'id': categorie.id}) }}"><i class="fa fa-eye"></i></a>
+                            <a class="btn btn-warning" href="{{ path('app_admin_categorie_edit', {'id': categorie.id}) }}"><i class="fa fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucune Catégorie trouvée</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

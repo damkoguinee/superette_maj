@@ -1,0 +1,26 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Collaborateurs{% endblock %}
+
+{% block body %}
+    <h1>Collaborateurs</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ collaborateur.id }}</td>
+            </tr>
+            <tr>
+                <th>Logo</th>
+                <td>{{ collaborateur.logo }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_collaborateurs_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_collaborateurs_edit', {'id': collaborateur.id}) }}">edit</a>
+
+    {{ include('admin/collaborateurs/_delete_form.html.twig') }}
+{% endblock %}

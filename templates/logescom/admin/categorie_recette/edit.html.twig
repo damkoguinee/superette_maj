@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CategorieRecette{% endblock %}
+
+{% block body %}
+    <h1>Edit CategorieRecette</h1>
+
+    {{ include('logescom/admin/categorie_recette/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_admin_categorie_recette_index') }}">back to list</a>
+
+    {{ include('logescom/admin/categorie_recette/_delete_form.html.twig') }}
+{% endblock %}

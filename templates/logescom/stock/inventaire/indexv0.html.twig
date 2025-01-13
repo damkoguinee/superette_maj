@@ -1,0 +1,134 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_inv") | url_encode %}
+
+{% block title %}inventaire{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+    {% set path = 'app_logescom_stock_inventaire_index'  %}
+    {% set nbrePages = stocks.nbrePages %}
+    {% set pageEncours = stocks.pageEncours %}                    
+    {% set id = inventaire.id %}  
+
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+
+        <div class="col-sm-12 col-md-10" style="overflow:auto;">
+            {# {% include "_common/_messages_flash.html.twig" %} #}
+            <h3 class="text-center">Inventaire des produits</h3>
+            
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th class="bg-info" colspan="8">
+                            <div class="d-flex justify-content-between align-items-center ">
+                                <form  class="form" action="{{ path('app_logescom_stock_inventaire_index', {'id': inventaire.id}) }}" method="GET">
+                                    <select onChange="this.form.submit()" name="magasin" id="" class="form-select">
+                                        <option value="{{magasin.id}}">{{magasin.nomStock}}</option>
+
+                                        {% for liste_stock in liste_stocks %}                            
+                                            <option value="{{liste_stock.id}}">{{liste_stock.nomStock}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+
+                                <a oncLick="alerteConfirmation()" class="btn btn-warning mx-2" href="{{ path('app_logescom_stock_liste_inventaire_cloture', {'id': inventaire.id}) }}">Clôturer</a>
+                                
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                    <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Qtite stock</th>
+                        <th>Inventaire</th>
+                        <th>Ecart</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, stock in stocks.data %}
+
+                    {% if stock.statut == 'clos' %}
+                        {% set color = 'success' %}
+                    {% elseif stock.ecart < 0 %}
+                        {% set color = 'danger' %}                        
+                    {% else %}
+                        {% set color = '' %}                        
+                    {% endif %}
+                    
+                    <form action="{{ path('app_logescom_stock_inventaire_index', {'id': inventaire.id}) }}" method="POST">
+                        <tr>
+                            <td class="text-center text-{{color}}">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class=" text-{{color}}">{{ stock.entity.products.categorie.nameCategorie }}</td>
+                            <td class=" text-{{color}}">{{ stock.entity.products.reference }}</td>
+                            <td class=" text-{{color}}">{{ stock.entity.products.designation }}</td>
+                            <td class="text-center text-{{color}}">{{ stock.entity.quantite ? stock.entity.quantite : 0  }}</td> 
+                            
+                            <input class="form-control" type="hidden" name="id_product" value="{{stock.entity.products.id}}">
+                            <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                            <input class="form-control" type="hidden" name="quantite_init" value="{{stock.entity.quantite}}">
+                            <input class="form-control" type="hidden" name="id_inv" value="{{stock.id_inv}}">
+                            <input class="form-control" type="hidden" name="search" value="{{search}}">
+                            <input class="form-control" type="hidden" name="pageEncours" value="{{pageEncours}}">
+
+                    
+                            <td class="text-center text-{{color}}">
+                                <input onChange="this.form.submit()" class="form-control text-center" type="number" name="quantite" placeholder="{{stock.qtite_inv}}">
+                            </td>                            
+                                
+                            <td class="text-center text-{{color}}">{{stock.ecart }}</td>
+                            <td class="text-center">
+                                {% if stock.qtite_inv is not empty and stock.statut =='en-cours' and is_granted("ROLE_MODIFICATION") %}
+                                    <a class="btn btn-success" onClick="alerteConfirmation()" href="{{ path('app_logescom_stock_inventaire_index', {'id': inventaire.id, id_inv: stock.id_inv, ajustement: "partiel"}) }}&{{queryString}}">Ajuster</a>
+                                {% elseif  stock.statut =='clos' and is_granted("ROLE_SUPPRESSION") %}
+                                    
+                                    <a onClick="alerteS()" class="btn btn-danger" href="{{ path('app_logescom_stock_inventaire_index', {'id': inventaire.id, id_inv: stock.id_inv, ajustement: "deletePartiel"}) }}&{{queryString}}">Annuler</a>
+                                    
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                    </form>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun produit trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                
+                
+            </table>
+            {% if nbrePages > 1 %}                    
+                {% include "_common/_pagination_id.html.twig" %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

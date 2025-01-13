@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta name="description" content="matériel de construction, matériaux de construction, tubes carrés, tubes rectangulaires, tôles, maison, soudure, quincaillerie">
+        <meta charset="UTF-8">
+        <title>{% block title %}matériaux de construction |{{entreprise.nomEntreprise}}{% endblock %}</title>
+            {% if entreprise is defined %}            
+                <link rel="icon" href="{{ asset(chemin_images_logos ~ entreprise.logo) }}" type="image/png">
+            {% endif %}
+        {# <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> #}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('all-styles') }}
+        {% endblock %}
+        <link rel="manifest" href="{{ asset('build/pwa-manifest.json') }}">
+    </head>
+    <body>
+        {% block body %}
+            {% block header %}
+                {% block bandeau %}
+                    <div class="promo d-flex justify-content-center align-items-center">
+                        <h6 class="text-center" id="scrollingText">Livraison gratuite pour les commandes de plus de 20 000 000 GNF</h6>
+                    </div>
+                {% endblock %}
+                <nav class="navbar navbar-expand-lg text-white bg-white" id="nav-scroll" style="height:70px;">
+                
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{{ path('app_home') }}">
+                            <img src="{{asset(chemin_images_logos) ~ entreprise.logo}}" height="65" alt="image logo">
+                            <span class="fw-bold" style="color: #04244d;">{{entreprise.nomEntreprise}}</span>
+                        </a>
+
+                        <div class="contact-search-container-top d-flex justify-content-between align-items-center ">
+                            <a href="" class="contact fw-bold text-center fs-5 mx-2" style="color: #04244d;">
+                                <i class="fa-solid fa-phone"></i> {{entreprise.telephone}} 
+                            </a>
+                            {% if not app.user %}
+
+                                <a class=" text-decoration-none d-inline-block p-2" href=" {{ path("app_login") }} ">
+                                    <i class="fa-solid fa-circle-user mx-2"></i>Connexion
+                                </a>
+                            {% else %}
+                                <a class=" text-decoration-none d-inline-block p-2" href="#">
+                                    <i class="fa-solid fa-circle-user mx-2"></i> {{ app.user.username |ucwords }}
+                                </a>
+
+                                <a class="text-white text-decoration-none d-inline-block p-2 text-danger" href=" {{ path("app_logout") }} ">
+                                    <i class="fa-solid fa-circle-user mx-2 text-danger"></i><span class="text-danger fw-bold">Déconnexion</span>
+                                </a>
+
+                            {% endif %}
+                        </div>
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-start">
+
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page" href="{{ path('app_home') }}">Accueil</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#contact">Nous Contactez</a>
+                                </li>   
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#categories">Nos Catégories</a>
+                                </li>
+                                
+                                {# <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#categories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Catégories
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Liste</a></li>
+                                        <li><a class="dropdown-item" href="#">Ajouter</a></li>
+                                    </ul>
+                                </li>   #}
+                                
+                                {% if app.user %} 
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{path("app_logescom_home")}}">Logescom</a>
+                                    </li>
+                                {% endif %}
+                                {# {% if app.user %}                               
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" target="_blank" href="https://koulamatco.damkoguinee.com/logescom-ms-koulamatco/form_connexion.php">Logescom</a>
+                                    </li>
+                                {% endif %} #}
+
+                                
+                            </ul>
+
+                            <div class="contact-search-container-bottom d-flex justify-content-between align-items-center">
+                                {% if not app.user %}
+
+                                    <a class=" text-decoration-none d-inline-block p-2" href=" {{ path("app_login") }} ">
+                                        <i class="fa-solid fa-circle-user mx-2"></i>Connexion
+                                    </a>
+                                {% else %}
+                                    <a class=" text-decoration-none d-inline-block p-2" href="#">
+                                        <i class="fa-solid fa-circle-user mx-2"></i> {{ app.user.username |ucwords }}
+                                    </a>
+
+                                    <a class="text-white text-decoration-none d-inline-block p-2 text-danger" href=" {{ path("app_logout") }} ">
+                                        <i class="fa-solid fa-circle-user mx-2 text-danger"></i><span class="text-danger">Déconnexion</span>
+                                    </a>
+
+                                {% endif %}
+
+                                <a href="" class="contact fw-bold text-center fs-5 mx-2" style="color: #04244d;">
+                                    <i class="fa-solid fa-phone"></i>  {{entreprise.telephone}}  
+                                </a>
+                                {# <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form> #}
+                            </div>
+                        </div>
+                    </div>
+                </nav>                
+            {% endblock %}
+            {% block carousel %}
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for banniere in bannieres %}
+
+                            <div class="carousel-item active">
+                                <img src="{{asset(chemin_images_bannieres) ~ banniere.image}}" class="d-block w-100 " alt="banniere {{banniere.id}}">
+                            </div>                            
+                        {% endfor %}                        
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-info bg-opacity-50" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-info bg-opacity-50" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            {% endblock %}
+            {% block main %}
+                <main>
+                    {% block categories %}
+                        <section class="section" id="categories">
+                            <div class="trait-h1  d-flex justify-content-between align-items-center">
+                                <h1 class="titre-h1 " id="collaborateurs">Catégories des produits</h1>
+                                {# <a class="btn btn-info btn-voir-tout" href="">Voir tout></a> #}
+                                {% set path = 'app_home'  %}
+                                {% set nbrePages = categories.nbrePages %}
+                                {% set pageEncours = categories.pageEncours %}
+                                
+                                <nav aria-label="Page navigation example ">
+                                    <ul class="pagination align-items-center justify-content-end mt-5 ">
+                                        {% if pageEncours > 1 %}
+                                            <li class="page-item ">
+                                                <a class="page-link" href="{{path(path, {pageEncours : pageEncours - 1} ) }}#categories">&lt;</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+                                        {% endif %}
+    
+                                        {% for page in 1..nbrePages %}                
+                                            <li class="page-item {{ ( page == pageEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {pageEncours : page })}}#categories">{{page}}</a></li>
+                                        {% endfor %}
+    
+                                        {% if pageEncours < nbrePages %}
+                                            <li class="page-item "><a class="page-link" href="{{path(path, {pageEncours : pageEncours + 1} ) }}#categories">&gt;</a></li>
+                                        {% else %}
+                                            <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+                                        {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+
+                            <div class="section-categories">
+
+                                {% for categorie in categories.data %}
+                                    <div class="card-categorie">
+                                        <img src="{{asset(chemin_images_categories) ~ categorie.couverture}}" class="card-categorie-img" alt="categorie {{categorie.id}}">
+                                        <div class="card-description">
+                                            <h5 class="card-name">{{categorie.nameCategorie | ucwords }}</h5>
+                                            <p class="card-discount">5 % de réduction</p>
+                                            <div class="card-div-button"><a href="{{path('app_home_detail_produit', {'id': categorie.id})}}" class="btn btn-warning btn-opacity-50">Consulter <i class="fa fa-eye "></i></a></div>
+                                        </div>
+                                    </div>                     
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endblock %}
+
+                    {% block produits %}
+                        {% set path = 'app_home'  %}
+                        {% set nbrePages = products.nbrePages %}
+                        {% set pageProductsEncours = products.pageProductsEncours %}
+                        
+                        <section class="section top-ventes mt-5">
+                            <div class="trait-h1 d-flex justify-content-between align-items-center">
+                                <h1 class="titre-h1 " id="topVentes">Meilleures Ventes </h1>
+                                {# <a class="btn btn-info btn-voir-tout" href="">Voir tout></a> #}
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination align-items-center justify-content-end mt-5 ">
+                                        {% if pageProductsEncours > 1 %}
+                                            <li class="page-item ">
+                                                <a class="page-link" href="{{path(path, {pageProductsEncours : pageProductsEncours - 1} ) }}#topVentes">&lt;</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+                                        {% endif %}
+    
+                                        {% for page in 1..nbrePages %}                
+                                            <li class="page-item {{ ( page == pageProductsEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {pageProductsEncours : page })}}#topVentes">{{page}}</a></li>
+                                        {% endfor %}
+    
+                                        {% if pageProductsEncours < nbrePages %}
+                                            <li class="page-item "><a class="page-link" href="{{path(path, {pageProductsEncours : pageProductsEncours + 1} ) }}#topVentes">&gt;</a></li>
+                                        {% else %}
+                                            <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+                                        {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+
+                            <div class="section-product-ventes">
+                                {% for product in products.data %}
+                                    <div class="card img-product align-items-center">
+                                        <a class="p-1 text-center" href="#contact" style="margin:auto;">
+                                        {% for image in product.categorie.imgProduit %}
+                                            <img class="img-logo" src="{{asset(chemin_images_product) ~ image}}" alt="image produit">
+                                        {% endfor %}
+                                            <div class="card-body">
+                                                <h7 class="card-title text-center  fs-7 fw-bold">{{product.designation | ucfirst}}</h7>
+                                                <div class=""> 
+                                                    <div class="text-warning fw-bold">À partir de {{ product.prixVente | number_format(0,',',' ') }} GNF</div>
+                                                </div>
+                                                <div class="text-success text-center fw-bold">Disponible</div>
+                                            </div>                                    
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+
+                            {% block services %}
+                                <div class="services d-flex justify-content-between">
+                                    <a href="" class="text-center">
+                                        <div class="mx-2 " >
+                                            <i class="fa-solid fa-truck fs-1 m-3"></i>
+                                        </div>
+                                        <div class="mx-2">
+                                            <h7 class="fw-bold">Livraison rapide dans toute la Guinée </h7>
+                                        </div>
+                                    </a>
+
+                                    <a href="" class="text-center">
+                                        <div class="mx-2 " >
+                                            <i class="fa-solid fa-money-bill fs-1 m-3"></i>
+                                        </div>
+                                        <div class="mx-2">
+                                            <h7 class="fw-bold">Garantie de Remboursement</h7>
+                                        </div>
+                                    </a>
+
+                                    <a href="" class="text-center">
+                                        <div class="mx-2 " >
+                                            <i class="fa-solid fa-right-left fs-1 m-3"></i>
+                                        </div>
+                                        <div class="mx-2">
+                                            <h7 class="fw-bold">Retours acceptés sous 15 jours</h7>
+                                        </div>
+                                    </a>
+
+                                    <a href="" class="text-center">
+                                        <div class="mx-2 " >
+                                            <i class="fa-solid fa-users fs-1 m-3"></i>
+                                        </div>
+                                        <div class="mx-2">
+                                            <h7 class="fw-bold">24/7 Service Client</h7>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% endblock %}
+
+                        </section>
+                    {% endblock %}
+
+                    {% block contact %}
+
+                        <section class="section section-contact" id="contact">
+                            <h1 class="text-center trait-h1" id="contact">Nous Contactez</h1>
+                            <div class="container-fluid ">
+                                <div class="row justify-content-center align-items-start ">
+                                    <div class="col-sm-12 col-md-6 col-lg-6 formcontact">
+                                        {{form_errors(form)}}
+                                        {{ form_start(form, {'action': path('app_email_contact_new'), 'method': 'POST'}) }}
+                                            <h2 class="py-2">Toujours prêt à vous aider !</h2>
+                                            <p class="fs-5 py-2 pb-4">Remplissez ce formulaire pour toute demande et nous vous répondrons dès que possible</p>
+                                            {{ include("_common/_messages_flash.html.twig") }}
+
+                                            <div class="container m-0 p-0 mb-2">
+                                                <div class="row m-0 p-0">                                               
+                                                    <div class="col-sm-12 col-md-8 px-0">
+                                                        {{form_row(form.telephone)}}
+                                                    </div>
+                                                    <div class="mb-2 px-0">
+                                                        {{form_row(form.email)}}
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 px-0">
+                                                        {{form_row(form.prenom)}}
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-6 px-0">
+                                                        {{form_row(form.nom)}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                {{form_row(form.message)}}
+                                            </div>
+
+                                            <button type="submit" class="btn btn-info btn-voir-tout">Envoyer</button>
+                                        {{form_end(form)}}
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 px-2">
+                                        <div style="margin:auto; padding-top: 40px;">
+                                            <h2 class="text-center pb-4">Services clients</h2>
+                                            <div class="d-flex justify-content-around align-items-center">
+                                                {% for lieu_vente in lieux_ventes %}
+                                                    <div class=" ">
+                                                        <h5 class="descContact fs-8 fw-bold">{{ lieu_vente.adresse | ucwords }}</h5>
+                                                        <p class="descContact m-0 p-0 fw-bold">Téléphone :</p> 
+                                                        <p class="descContact-info m-0 p-0 fw-bold">{{ lieu_vente.telephone}}</p>
+
+                                                        <p class="descContact m-0 mt-2 p-0 fw-bold">Adresse :</p> 
+                                                        <p class="descContact-info m-0 p-0 fw-bold">{{lieu_vente.ville | ucwords ~ "/" ~ lieu_vente.region | ucwords}}</p>
+                                                        <p class="descContact-info m-0 p-0 fw-bold">{{lieu_vente.pays | ucwords}}</p>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="my-4" id="map" style="height: 600px;"></div>
+                            </div>
+                            
+                        </section>
+                    {% endblock %}
+
+                    {% block collaborateurs %}
+                        <section class="section collaborateurs">
+                            <h1 class="text-center trait-h1" id="collaborateurs">Ils nous ont fait confiance</h1>
+                            <div class="container-fluid py-4">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    {% for collaborateur in collaborateurs %}
+                                        <div class="col py-2"><img class="imgCollaborateurs" src="{{asset(chemin_images_logos) ~ collaborateur.logo }}" alt="logo collaborateurs"></div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </section>
+                    {% endblock %}
+
+                    {% block social %}
+
+                        <div class="social-icons">
+                            <a href="lien_vers_facebook" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="lien_vers_messenger" target="_blank" class="social-icon"><i class="fab fa-facebook-messenger"></i></a>
+                            <a href="whatsapp://send?phone=+224622520556" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+
+                            <a href="lien_vers_twitter" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+                            <a href="lien_vers_instagram" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <!-- Ajoutez d'autres liens et icônes selon vos besoins -->
+                        </div>
+                    {% endblock %}
+
+                    {% block scroll %}
+
+                        <button class="scroll" id="scrollButton" title="Go-to-top" onclick="scrollToTop()">
+                            <i class="fa-solid fa-backward-step fa-rotate-90"></i>
+                        </button>
+                    {% endblock %}
+
+
+                </main>
+            {% endblock %}
+            {% block footer %}
+                <footer class="mt-5 p-4">
+                    <div class="row">
+                        <p class="text-center">Nous acceptons les moyens de paiement suivants</p>
+
+                    
+                        <div class="d-flex align-items-center justify-content-center" >
+                            <div class=""><img src="{{asset(chemin_img_paie)}}modep.jpg" width="100" height="50" alt="mode paiement"></div>
+                            <div class=""><img src="{{asset(chemin_img_paie)}}omoney.jpg" width="100" height="50" alt="orange money"></div>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 py-4"><a href="#">Politiques de cookies</a></div>
+                            <div class="col-sm-12 col-md-3 py-4"><a href="#">Mentions légales</a></div>
+                            <div class="col-sm-12 col-md-3 py-4"><a href="#">Politique de confidentialités</a></div>
+                            <div class="col-sm-12 col-md-3 py-4">&copy Copyright {{entreprise.nomEntreprise | strtolower}}.com – Tous droits réservés. Par DAMKO</div>
+                        </div>
+                    </div>
+                </footer>
+            {% endblock %}
+        
+        {% endblock %}
+        {% if lieux_ventes_map is defined %}
+
+            {#  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvfNxw92l42OaGInLPRxrL3OiSOj785a4&callback=initMap" async defer></script> #}
+
+            {# <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAvfNxw92l42OaGInLPRxrL3OiSOj785a4&sensor=false&callback=initialize"></script> ancienne version qui marche avec immobilier#}
+
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvfNxw92l42OaGInLPRxrL3OiSOj785a4&callback=initMap&libraries=places&v=weekly" async defer></script> 
+
+
+            <script>
+                function initMap() {
+                    // Création de la carte
+                    const map = new google.maps.Map(document.getElementById('map'), {
+                        center: { lat: 9.51706, lng: -13.699843 },
+                        zoom: 5
+                    });
+                    // Tableau d'entités
+                    
+                        const lieuxVentes = {{ lieux_ventes_map|raw }};
+                        // Parcourir les lieux de vente et créer des marqueurs
+                        lieuxVentes.forEach(function(lieu) {
+                            const marker = new google.maps.Marker({
+                                position: { lat: parseFloat(lieu.lat), lng: parseFloat(lieu.lng) },
+                                map: map,
+                                title: lieu.adresse
+                            });
+                            // Ajoutez des informations supplémentaires à la fenêtre d'info-bulle si nécessaire
+                            const infowindow = new google.maps.InfoWindow({
+                                content: "<strong>" + lieu.adresse + "</strong><br>" + lieu.ville
+                            });
+
+                            marker.addListener('click', function() {
+                                infowindow.open(map, marker);
+                            });
+                        });
+                    
+                }
+            </script>
+        {% endif %}
+
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('all-scripts') }}
+        {% endblock %}
+
+    </body>
+</html>

@@ -1,0 +1,119 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}liste des stocks{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+
+        <div class="col-sm-12 col-md-10" style="overflow:auto;" >
+            {% include "_common/_messages_flash.html.twig" %}
+            <h5 class="text-center">Anomalies {{magasin.nomStock|ucwords}}</h5>
+            
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th class="bg-info" colspan="9">
+                            <div class="d-flex justify-content-between">
+                                <form  class="form"  method="GET">
+                                    <select onChange="this.form.submit()" name="magasin" id="" class="form-select">
+                                        <option value="{{magasin.id}}">{{magasin.nomStock}}</option>
+
+                                        {% for liste_stock in liste_stocks %}                            
+                                            <option value="{{liste_stock.id}}">{{liste_stock.nomStock}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Qtité Stock</th>
+                        <th>Qtité Mouv</th>
+                        <th>Diff</th>
+                        <th>Stock Réel</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, anomalie in anomalies %}                        
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                                <a href="{{path("app_logescom_stock_mouvement_product", {lieu_vente : lieu_vente.id, id_product_search : anomalie.stock.products.id, magasin : magasin.id})}}" class="btn btn-info">MVP</a>
+                            </td>
+                            <td>{{ anomalie.stock.products.categorie.nameCategorie }}</td>
+                            <td>{{ anomalie.stock.products.reference }}</td>
+                            <td>{{ anomalie.stock.products.designation }}</td>
+                            <td class="text-center">{{ anomalie.stock.quantite }}</td>
+                            <td class="text-center">{{ anomalie.mouvement }}</td>
+                            <td class="text-center">{{ (anomalie.stock.quantite - anomalie.mouvement) }}</td>
+                            <form class="form" method="POST" action="{{ path('app_logescom_stock_gestion_stock_anomalie', {'lieu_vente': lieu_vente.id}) }}">
+                                <td class="text-end">
+                            
+                                    {% if is_granted("ROLE_GESTIONNAIRE") %}     
+                                        <input type="number" name="qtite_reel" required class="form-control text-center mx-1">
+
+                                        <input type="hidden" name="id_stock" value="{{anomalie.stock.id}}">
+
+                                        <input type="hidden" name="qtite_mouv" value="{{anomalie.mouvement}}">
+
+                                        <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+
+                                        <input class="form-control" type="hidden" name="search" value="{{search}}">
+
+                                        <input type="hidden" name="ajustement" value="ajustement_prix">                                  
+                                    {% endif %}
+                                </td>
+                            
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        {% if is_granted("ROLE_GESTIONNAIRE") %}
+                                            <button class="btn btn-warning mx-1">Ajuster</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </form> 
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="9">Aucune anomalie trouvée</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>               
+                
+            </table>                                 
+                
+        </div>
+    </div>
+
+{% endblock %}

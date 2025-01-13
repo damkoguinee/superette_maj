@@ -1,0 +1,39 @@
+{{ form_errors(form) }}
+{{ form_start(form) }}
+
+    <input type="hidden" name="client" value="{{client}}">
+
+    <div class="row mb-1">
+        {{ form_row(form.montantCheque) }}
+    </div>
+
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.numeroCheque) }}
+        </div>
+        
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.banqueCheque) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.caisseDepot) }}
+        </div>
+    </div>
+    <div class="row mb-1">
+        {{ form_row(form.montantRecu) }}
+    </div>
+    <div class="row mb-1">
+
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.caisseRetrait) }}
+        </div>
+        <div class="col-sm-12 col-md-6">
+            {{ form_row(form.commentaire) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.dateOperation) }}
+        </div>
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+{{ form_end(form) }}
+

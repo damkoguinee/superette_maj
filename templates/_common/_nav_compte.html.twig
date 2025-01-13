@@ -1,0 +1,18 @@
+<div class="col-sm-12 col-md-2 pb-3" style="background-color:#152736;">     
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'client', type2 : 'client-fournisseur'})}}">Compte Clients</a>
+    {% if is_granted("ROLE_RESPONSABLE") %}
+        <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'fournisseur', type2 : 'fournisseur'})}}">Compte Fournisseurs</a>
+        <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'frais', type2 : 'transporteur'})}}">Transporteurs</a>
+        <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'douanier', type2 : 'transitaire'})}}">Douaniers/Transitaires</a>
+    {% endif %}
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'autres', type2 : 'autres'})}}">Compte Autres</a>
+
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur", {lieu_vente : lieu_vente.id, type1 : 'personnel', type2 : 'personnel'})}}">Compte Personnels</a>
+       
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_ajustement_solde_index", {lieu_vente : lieu_vente.id})}}">Ajustement Compte</a>
+    
+
+    <a style="width: 100%; " class="btn btn-danger text-center fw-bold m-auto my-2" href="{{path("app_logescom_compte_compte_collaborateur_inactif", {lieu_vente : lieu_vente.id, type1 : 'client', type2 : 'client-fournisseur'})}}">Collaborateurs inactifs</a>
+
+
+</div>

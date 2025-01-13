@@ -1,0 +1,167 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}liste des dépenses{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+    {% if app.request.query.has('date1') %}
+        {% set date1 = app.request.query.get('date1') %}
+        {% set date2 = app.request.query.get('date2') %}
+
+    {% else %}
+        {% set date1 = "now"|date("Y-01-01") %}
+        {% set date2 = "now"|date("Y-m-d") %}
+    {% endif %}
+
+    {% set nbrePages = depenses.nbrePages %}
+    {% set pageEncours = depenses.pageEncours %} 
+    {% set id = lieu_vente.id %}
+
+    <div class="row my-2">
+        {% include "_common/_nav_decaissement.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+        
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th colspan="11" class="text-center bg-info text-white">
+                            Liste des dépenses 
+                            <a class="btn btn-warning" href="{{ path('app_logescom_sorties_depenses_new', {lieu_vente : lieu_vente.id}) }}">Enregistrer une dépense</a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="11" class="text-center bg-info text-white">
+                            <form class="form w-100">
+                                <div class="row align-items-center ">
+                                    <div class="col-7">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-5">
+                                                <input type="date" name="date1" value="{{ date1 }}" class="form-control" onChange="this.form.submit()" max="{{ date2 }}"> 
+                                            </div>
+                                            <div class="col-1">au</div>
+                                            <div class="col-sm-12 col-md-6">
+                                                <input type="date" name="date2" value="{{ date2 }}" class="form-control" onChange="this.form.submit()" min="{{ date1}}" max="{{ "now"|date("Y-m-d") }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <select name="categorie" id="" class="form-select" onChange="this.form.submit()">
+                                            <option value="{{search ? search.id : ""}}">{{search ? search.description|ucfirst : "Recherchez par categorie"}}</option>
+                                            {% for categorie in categories %}
+                                                <option value="{{categorie.id}}">{{categorie.description|ucfirst}}</option>
+                                                
+                                            {% endfor %}
+                                        </select>
+                                    </div>   
+                                </div>
+                            </form>
+                                    
+                        </th>
+                    <tr>
+                    <tr>
+                        <th class="bg-info text-white">N°</th>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Catégorie</th>
+                        <th class="bg-info text-white">Description</th>
+                        <th class="bg-info text-white">Montant TTC</th>
+                        <th class="bg-info text-white">TVA</th>
+                        <th class="bg-info text-white">Devise</th>
+                        <th class="bg-info text-white">Mode de paie</th>
+                        <th class="bg-info text-white">Caisse</th>
+                        <th class="bg-info text-white">Traité par</th>
+                        <th class="bg-info text-white">actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set cumulMontant = 0 %}
+                    {% for key, depense in depenses.data %}
+                        {% set cumulMontant = cumulMontant + depense.montant  %}
+                            <tr>
+                                <td class="text-center">
+                                    {{ (key +1) }}
+                                    {% if depense.justificatif is not empty %}
+                                        <a href="{{ asset('depenses/' ~ depense.justificatif) }}" target="_blank"><i class="fa-solid fa-file-pdf fs-3"></i> </a>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ depense.dateDepense ? depense.dateDepense|date('d/m/Y') : '' }}</td>
+                                <td>{{ depense.categorieDepense.description|ucfirst }}</td>
+                                <td>{{ depense.description }}</td>
+                                <td class="text-end">{{ depense.devise.nomDevise == 'gnf' ? depense.montant|number_format(0,',',' ') : depense.montant|number_format(2,',',' ') }}</td>
+                                <td class="text-end">{{ depense.devise.nomDevise == 'gnf' ? depense.tva|number_format(0,',',' ') : depense.tva|number_format(2,',',' ') }}</td>
+                                <td class="text-center">{{ depense.devise.nomDevise|strtoupper }}</td>
+                                <td class="text-center">{{ depense.modePaiement.designation }}</td>
+                                <td class="text-center">{{ depense.caisseRetrait.designation }}</td>
+                                <td>{{ depense.traitePar.prenom | ucwords ~ " " ~ depense.traitePar.nom | strtoupper }}</td>
+                                <td class="text-center">
+
+                                    <a class="btn btn-success" href="{{ path('app_logescom_sorties_depenses_show', {'id': depense.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-eye"></i></a>
+                                    <a class="btn btn-warning" href="{{ path('app_logescom_sorties_depenses_edit', {'id': depense.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="11">Aucune depense trouvée</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="bg-info text-white bg-opacity-75">
+                        <th colspan="11" class="bg-info text-white bg-opacity-20 text-end  fw-bold">
+                        <div class="d-flex justify-content-between">
+                            {% for cumul in cumulDepenses %}
+                                <div> Cumul {{cumul.nomDevise|strtoupper}}
+                                    {{cumul.nomDevise == 'gnf' ? cumul.montantTotal|number_format(0,',',' ') : cumul.montantTotal|number_format(2,',',' ')}}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </th>                        
+                    </tr>
+                </tfoot>
+            </table>
+            {% set path = 'app_logescom_sorties_depenses_index'  %}
+                                  
+            {% if nbrePages > 1 %}                    
+
+                {% if nbrePages %}
+                    <nav aria-label="Page navigation example ">
+                        <ul class="pagination justify-content-start">
+                            {% if pageEncours > 1 %}
+                                <li class="page-item ">
+                                    <a class="page-link" href="{{path(path, {lieu_vente : id, pageEncours : (pageEncours - 1), search : search})}}">&lt;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+                            {% endif %}
+                            {% for page in 1..nbrePages %}                
+                                <li class="page-item {{ ( page == pageEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {lieu_vente : id, pageEncours : page, search : search})}}">{{page}}</a></li>
+                            {% endfor %}
+                            {% if pageEncours < nbrePages %}
+                                <li class="page-item "><a class="page-link" href="{{path(path, {lieu_vente : id,pageEncours : pageEncours + 1, search : search} ) }}">&gt;</a></li>
+                            {% else %}
+                                <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+                            {% endif %}
+                            </li>
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

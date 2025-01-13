@@ -1,0 +1,45 @@
+
+{{ form_start(form) }}
+{{ form_errors(form)}}
+    <div class="row mb-1">
+        
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.fournisseur) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.numeroFacture) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.montant) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.tva) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.devise) }}
+        </div>
+        
+    </div>
+    <div class="row mb-1">
+       
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.taux) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.caisse) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form.commentaire) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.dateFacture) }}
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-6">
+            {{ form_row(form.document) }}
+        </div>
+        
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+{{ form_end(form) }}

@@ -1,0 +1,62 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Dimensions{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center">Liste des Dimensions</h3>
+            <a class="btn btn-primary" href="{{ path('app_admin_dimensions_new') }}">Ajouter une dimension</a>
+
+
+            <table class="table table-bordered table-striped table-hover align-middle text-center m-auto">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>Dimensions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for categorie in categories %}
+                    <tr>
+                        <td>
+                            {{ categorie.id }}
+                            {% if categorie.couverture %}            
+                                {# {{categorie.couverture|img("miniature", "couverture manquante")|raw}} #}
+                                {# <img src="{{asset(chemin_images_product) ~ categorie.couverture}}" alt="image {{ categorie.nameCategorie }}" class="miniature">                         #}
+                            {% else %}
+                                {# <img alt="image {{ categorie.nameCategorie }}" class="miniature"> #}
+                            {% endif %}
+                        </td>
+                        <td class="text-start">{{ categorie.nameCategorie }}</td>
+                        <td>
+                            {% for dimension in categorie.dimensions %}
+                                <a class="btn btn-success" href="{{ path('app_admin_dimensions_show', {'id': dimension.id}) }}">{{ dimension.valeurDimension}}</a>{{~ (loop.last ? "" : " - ")}}
+                                
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucune dimension trouvée</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

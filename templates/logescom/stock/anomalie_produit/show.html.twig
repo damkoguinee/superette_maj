@@ -1,0 +1,78 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_inv") | url_encode %}
+
+{% block title %}anomalie detail{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+
+        <div class="col-sm-12 col-md-10" >
+            
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <tbody>                    
+
+                    <tr>
+                        <th>Réference Produit</th>
+                        <td>{{anomalie_produit.product.reference | ucfirst}}</td>
+                    </tr>
+                    <tr>
+                        <th>Désignation Produit</th>
+                        <td>{{anomalie_produit.product.designation | ucfirst}}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Stock</th>
+                        <td>{{anomalie_produit.stock.nomStock | ucfirst}}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Quantite</th>
+                        <td>{{ anomalie_produit.quantite }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prix-Revient</th>
+                        <td>{{ anomalie_produit.prixRevient|number_format(0,',',' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Comentaire</th>
+                        <td>{{anomalie_produit.inventaire ? " origine inventaire" : anomalie_produit.comentaire |ucfirst }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Traité par </th>
+                        <td>{{anomalie_produit.personnel.prenom |ucfirst }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date anomalie</th>
+                        <td>{{ anomalie_produit.dateAnomalie ? anomalie_produit.dateAnomalie|date('Y-m-d') : '' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-light" href="{{ path('app_logescom_stock_anomalie_produit_new', {lieu_vente : anomalie_produit.stock.lieuVente.id}) }}">Retour</a>
+
+                {# <a class="btn btn-warning" href="{{ path('app_logescom_stock_anomalie_produit_edit', {'id': anomalie_produit.id}) }}">edit</a> #}
+                {% if anomalie_produit.inventaire is empty and is_granted("ROLE_SUPPRESSION")  %}
+                    {{ include('logescom/stock/anomalie_produit/_delete_form.html.twig') }}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

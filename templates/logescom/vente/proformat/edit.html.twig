@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Proformat{% endblock %}
+
+{% block body %}
+    <h1>Edit Proformat</h1>
+
+    {{ include('logescom/vente/proformat/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_vente_proformat_index') }}">back to list</a>
+
+    {{ include('logescom/vente/proformat/_delete_form.html.twig') }}
+{% endblock %}

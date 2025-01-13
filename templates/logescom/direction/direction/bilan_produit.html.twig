@@ -1,0 +1,216 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}bilan des produits{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+
+    {% if app.request.query.has('date1') %}
+        {% set date1 = app.request.query.get('date1') %}
+        {% set date2 = app.request.query.get('date2') %}
+
+    {% else %}
+        {% set date1 = date1 %}
+        {% set date2 = date2 %}
+    {% endif %}
+
+    <div class="row my-2">
+        {% include "_common/_nav_direction.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <div class="row bg-info align-items-center">
+                <div class="col-sm-12 col-md-8">
+
+                    <form class="form d-flex justify-content-between align-items-center bg-info p-2">
+                        <input type="date" name="date1" value="{{ date1 }}" class="form-control" onChange="this.form.submit()" max="{{ date2 }}"> 
+                        <span class="mx-2 text-white">au</span>
+                        <input type="date" name="date2" value="{{ date2 }}" class="form-control" onChange="this.form.submit()" min="{{ date1}}" max="{{ "now"|date("Y-m-d") }}">
+
+                        <select class="form-select mx-1" name="lieu" id="" onChange="this.form.submit()">
+                            {% if search_lieu == 'general' %}
+                                <option value="general">Général</option>
+                            {% else %}
+                                
+                                <option value="{{lieu_vente.id}}">{{lieu_vente.lieu}}</option>
+
+                            {% endif %}
+                            {% for lieu in lieux %}
+                                <option value="{{lieu.id}}">{{lieu.lieu|ucfirst}}</option>
+                            {% endfor %}
+                            <option value="general">Général</option>
+
+                        </select>
+                    </form>
+                </div>
+                <div class="col-sm-12 col-md-4 ">
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+
+                        {% if search_lieu == 'general' %}
+                            <input class="form-control" type="hidden" name="lieu" value="general">
+
+                        {% else %}
+                            <input class="form-control" type="hidden" name="lieu" value="{{lieu_vente.id}}">
+
+                        {% endif %}
+                        <input class="form-control" type="hidden" name="date1" value="{{date1}}">
+                        <input class="form-control" type="hidden" name="date2" value="{{date2}}">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div style="overflow:auto; height: 500px" >
+
+                    <table class="table table-bordered table-striped table-hover align-middle">
+
+                        <thead class="sticky-top bg-light text-center">
+                            <tr>
+                                <th colspan="17" class="text-center bg-info text-white">
+                                    Bilan des produits entre le {{date1|date("d/m/Y") ~ " au " ~ date2|date("d/m/Y")  }}
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th colspan="2" class="bg-info text-white">Infos</th>
+                                <th colspan="2" class="bg-primary text-white">Achat des Produits</th>
+                                <th colspan="4" class="bg-success text-white">Vente des Produits</th>
+                                <th colspan="2" class="bg-danger text-white">Anomalies</th>
+                                <th colspan="7" class="bg-secondary text-white">Stock</th>
+                            </tr>
+                            
+                            <tr>
+                                <th class="bg-info text-white">N°</th>
+                                <th class="bg-info text-white">Désignation</th>
+
+                                <th class="bg-primary bg-opacity-50 text-white">Nbre</th> 
+                                <th class="bg-primary bg-opacity-50 text-white">Montant</th>
+                                
+                                <th class="bg-success text-white">Nbre</th> 
+                                <th class="bg-success text-white">Montant</th> 
+                                <th class="bg-success text-white">P. Revient</th> 
+                                <th class="bg-success text-white">Bénéfice</th>
+                                
+                                <th class="bg-danger text-white">Nbre</th>
+                                <th class="bg-danger text-white">Montant</th>
+
+                                <th class="bg-secondary text-white">Qtite</th>
+                                <th class="bg-secondary text-white">Non Livré</th>
+                                <th class="bg-secondary text-white">Dispo</th>
+                                <th class="bg-secondary text-white">Montant</th>
+                                <th class="bg-secondary text-white">P.Revient</th>
+                                <th class="bg-secondary text-white">Bénéfice</th>
+                                <th class="bg-secondary text-white">Qtite Var</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set cumulQuantite = 0 %}
+                            {% set cumulPrixVente = 0 %}
+                            {% set cumulPrixRevient = 0 %}
+                            {% for key, bilan in bilan_products %}
+                            {# {{dump(bilan.achats)}} #}
+                                <tr>
+                                    <td class="text-center">
+                                        {{ (key +1) }}
+                                    </td>
+                                    <td>{{bilan.product.designation|ucfirst}}</td>
+                                    {% for achat in bilan.achats %}
+                                        <td class='text-center'>{{achat.nbreAchat|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{achat.totalAchat|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+                                    {% for vente in bilan.ventes %}
+                                        <td class='text-center'>{{vente.nbreVente|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{vente.totalVente|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{vente.totalRevient|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{vente.benefice|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+                                    {% for anomalie in bilan.anomalies %}
+                                        <td class='text-center'>{{anomalie.nbre|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{anomalie.totalAnomalie|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+                                    {% for stock in bilan.stocks %}
+                                        <td class='text-center text-nowrap'>{{stock.totalQuantite|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+                                    <td class='text-center text-nowrap'>{{bilan.resteLivraison|number_format(0,',',' ')}}</td>
+                                    {% set dispo = 0 %}
+                                    {% for stock in bilan.stocks %}
+                                        {% set dispo = dispo + (stock.totalQuantite - bilan.resteLivraison) %}
+                                        <td class='text-center text-nowrap'>{{dispo|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+
+                                    {% for stock in bilan.stocks %}
+                                        <td class='text-center text-nowrap'>{{(stock.product.prixVente * dispo)|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{(stock.product.prixRevient * dispo)|number_format(0,',',' ')}}</td>
+                                        <td class='text-center text-nowrap'>{{((stock.product.prixVente * dispo) - (stock.product.prixRevient * dispo))|number_format(0,',',' ')}}</td>
+                                    {% endfor %}
+
+                                    <td class='text-center text-nowrap'>{{bilan.qtite_var|number_format(0,',',' ')}}</td>
+
+                                    
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="17">Aucune commande éffectuée</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                        {# {% set path = 'app_logescom_direction_direction_produit_vente'  %}
+                        {% set nbrePages = commandes.nbrePages %}
+                        {% set pageEncours = commandes.pageEncours %} 
+                        {% set id = lieu_vente.id %}   
+                        {% if nbrePages > 1 %}                    
+
+                            {% if nbrePages %}
+                                <nav aria-label="Page navigation example ">
+                                    <ul class="pagination justify-content-start">
+                                        {% if pageEncours > 1 %}
+                                            <li class="page-item ">
+                                                <a class="page-link" href="{{path(path, {lieu_vente : id, pageEncours : (pageEncours - 1), date1 : date1, date2 : date2})}}">&lt;</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+                                        {% endif %}
+                                        {% for page in 1..nbrePages %}                
+                                            <li class="page-item {{ ( page == pageEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {lieu_vente : id, pageEncours : page, date1 : date1, date2 : date2})}}">{{page}}</a></li>
+                                        {% endfor %}
+                                        {% if pageEncours < nbrePages %}
+                                            <li class="page-item "><a class="page-link" href="{{path(path, {lieu_vente : id,pageEncours : pageEncours + 1, date1 : date1, date2 : date2} ) }}">&gt;</a></li>
+                                        {% else %}
+                                            <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+                                        {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            {% endif %}
+                        {% endif %} #}
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

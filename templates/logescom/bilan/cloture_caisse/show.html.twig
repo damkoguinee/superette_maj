@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClotureCaisse{% endblock %}
+
+{% block body %}
+    <h1>ClotureCaisse</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cloture_caisse.id }}</td>
+            </tr>
+            <tr>
+                <th>Journee</th>
+                <td>{{ cloture_caisse.journee ? cloture_caisse.journee|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>MontantTheo</th>
+                <td>{{ cloture_caisse.montantTheo }}</td>
+            </tr>
+            <tr>
+                <th>MontantReel</th>
+                <td>{{ cloture_caisse.montantReel }}</td>
+            </tr>
+            <tr>
+                <th>DateSaisie</th>
+                <td>{{ cloture_caisse.dateSaisie ? cloture_caisse.dateSaisie|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Difference</th>
+                <td>{{ cloture_caisse.difference }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_nhema_caisse_cloture_caisse_index') }}">back to list</a>
+
+    <a href="{{ path('app_nhema_caisse_cloture_caisse_edit', {'id': cloture_caisse.id}) }}">edit</a>
+
+    {{ include('nhema/caisse/cloture_caisse/_delete_form.html.twig') }}
+{% endblock %}

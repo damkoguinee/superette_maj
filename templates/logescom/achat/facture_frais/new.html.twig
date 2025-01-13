@@ -1,0 +1,33 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}ajouter une facture frais{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('etat_facture') %}
+        {% set etat_facture = app.request.query.get('etat_facture') %}
+    {% else %}
+        {% set etat_facture = "non payé" %}
+    {% endif %}
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <h3>Enregistrer une facture frais</h3>
+            {{ include('logescom/achat/facture_frais/_form.html.twig') }}
+
+            <a class="btn btn-light my-4" href="{{ path('app_logescom_achat_facture_frais_index', {lieu_vente : lieu_vente.id}) }}">Retour</a>
+        </div>
+    </div>
+{% endblock %}
+

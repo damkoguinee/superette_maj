@@ -1,0 +1,33 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}modifier entreprise{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+
+            {{ include('admin/entreprise/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+            
+            <div class="d-flex justify-content-between my-2">
+            
+                <a class="btn btn-light" href="{{ path('app_admin_entreprise_show', {'id': entreprise.id}) }}">Retour</a>
+                {% if entreprise.id != 1 %}
+                
+                    {{ include('admin/entreprise/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

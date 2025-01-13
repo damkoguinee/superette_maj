@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit AnomalieProduit{% endblock %}
+
+{% block body %}
+    <h1>Edit AnomalieProduit</h1>
+
+    {{ include('logescom/stock/anomalie_produit/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_stock_anomalie_produit_index') }}">back to list</a>
+
+    {{ include('logescom/stock/anomalie_produit/_delete_form.html.twig') }}
+{% endblock %}

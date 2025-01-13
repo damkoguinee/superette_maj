@@ -1,0 +1,111 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}détail transfert{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('id_client_search') %}
+        {% set client = app.request.query.get('id_client_search') %}
+    {% else %}
+        {% set client = "" %}
+    {% endif %}
+    <div class="row my-2">
+        {% include "_common/_nav_caisse.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Etat du transfert</th>
+                        <td>{{ transfert_fond.etat|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Référence</th>
+                        <td>{{ transfert_fond.reference }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Commentaire</th>
+                        <td>{{ transfert_fond.commentaire|ucfirst }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Montant</th>
+                        <td>{{ transfert_fond.devise.nomDevise == 'gnf' ? transfert_fond.montant|number_format(0,',',' ') : transfert_fond.montant|number_format(2,',',' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Devise</th>
+                        <td>{{ transfert_fond.devise.nomDevise|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Caisse de départ</th>
+                        <td>{{ transfert_fond.caisseDepart ? transfert_fond.caisseDepart.designation|ucfirst ~ " " ~ (transfert_fond.caisseDepart.pointDeVente ? transfert_fond.caisseDepart.pointDeVente.lieuVente.lieu : "") : (transfert_fond.type == 'autres' ? 'autres' : "") }}</td>
+
+                    </tr>
+
+                    <tr>
+                        <th>Caisse de réception</th>
+                        <td>{{ transfert_fond.caisseReception ? transfert_fond.caisseReception.designation|ucfirst ~ " " ~ (transfert_fond.caisseReception.pointDeVente ? transfert_fond.caisseReception.pointDeVente.lieuVente.lieu : "") : (transfert_fond.type == 'autres' ? 'autres' : "") }}</td>
+
+                    </tr>
+                    <tr>
+                        <th>Date Opération</th>
+                        <td>{{ transfert_fond.dateOperation ? transfert_fond.dateOperation|date('d/m/Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de Saisie</th>
+                        <td>{{ transfert_fond.dateSaisie ? transfert_fond.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Envoyé par</th>
+                        <td>{{ transfert_fond.envoyePar.prenom|ucwords ~ " " ~ transfert_fond.envoyePar.nom |strtoupper }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+
+                <a class="btn btn-light" href="{{ path('app_logescom_caisse_transfert_fond_index', { lieu_vente : lieu_vente.id}) }}">Retour</a>
+
+                {% if transfert_fond.lieuVenteReception is not empty %}
+
+                    {% if is_granted("ROLE_MODIFICATION") and  (transfert_fond.lieuVente.id == transfert_fond.lieuVenteReception.id) %}
+                        <a class="btn btn-warning" href="{{ path('app_logescom_caisse_transfert_fond_edit', {'id': transfert_fond.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                    {% else %}
+                    {% endif %}
+                {% else %}
+                    <a class="btn btn-warning" href="{{ path('app_logescom_caisse_transfert_fond_edit', {'id': transfert_fond.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                    
+                {% endif %}
+                {% if is_granted("ROLE_SUPPRESSION") %}
+                    {% if transfert_fond.type == 'banque' and transfert_fond.lieuVente.id == lieu_vente.id %}
+                        {{ include('logescom/caisse/transfert_fond/_delete_form.html.twig') }}
+                    {% elseif transfert_fond.etat == 'envoyer' and transfert_fond.lieuVente.id == lieu_vente.id %}
+                        {{ include('logescom/caisse/transfert_fond/_delete_form.html.twig') }}
+                    {% elseif transfert_fond.type == 'autres' and transfert_fond.lieuVente.id == lieu_vente.id %}
+                        {{ include('logescom/caisse/transfert_fond/_delete_form.html.twig') }}
+                        
+                    {% elseif transfert_fond.lieuVente.id == transfert_fond.lieuVenteReception.id %}
+                        {{ include('logescom/caisse/transfert_fond/_delete_form.html.twig') }}                    
+                    {% else %}
+                        
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

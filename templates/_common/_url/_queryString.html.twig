@@ -1,0 +1,2 @@
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajax") | url_encode %}

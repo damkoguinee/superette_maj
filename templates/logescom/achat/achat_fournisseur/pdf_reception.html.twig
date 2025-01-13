@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}pdf{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+			{# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
+		{% endblock %}
+
+        {% block javascripts %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		    <script src="https://kit.fontawesome.com/8df11ad090.js" crossorigin="anonymous"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <style>
+            body{
+            margin: 0px;
+            width: 100%;
+            height:68%;
+            padding:0px;}
+            .ticket{
+                margin:0px;
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;
+                border-collapse: collapse;
+            }
+            
+            .border th {
+                border: 1px solid black;
+                padding: 5px;
+                font-weight: bold;
+                font-size: 16px;
+                color: black;
+                background: white;
+                text-align: right;
+            }
+            .border td {
+                border: 1px solid black;
+                padding: 3px;    
+                font-size: 14px;
+                color: black;
+                background: white;
+                text-align: center;
+            }
+            .footer{
+                font-size: 18px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <tbody>
+                <tr>
+                    <th colspan="4" style="text-align:center; font-weight: bold; font-size: 18px; padding-top: 5px; border: 0px;">
+                        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="380" height="100">
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:center; border: 0px;">{{lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement}}</td>
+                </tr>
+        
+                <tr>
+                    <td colspan="4" style="text-align:center; border: 0px; padding-bottom:20px;">{{lieu_vente.adresse ~ " Tél:"~ lieu_vente.telephone}}</td>
+                </tr>
+
+                <tr>
+                    <th colspan="4" style="text-align:right; font-size: 16px; border: 0px; ">{{achat_fournisseur.fournisseur.prenom|ucwords ~ " " ~ achat_fournisseur.fournisseur.nom|strtoupper}}</th>
+                </tr>
+
+                <tr>
+                    <td colspan="4" style="text-align:right; font-size: 16px; border: 0px;">Téléphone: {{achat_fournisseur.fournisseur.telephone}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" style="text-align:right; font-size: 16px; border: 0px;">Téléphone: {{achat_fournisseur.fournisseur.adresse | ucfirst}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" style="text-align:left; font-size: 16px; border: 0px; ">Facture N°: {{achat_fournisseur.numeroFacture | strtoupper}}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left; font-size: 16px; border: 0px; ">Date: {{achat_fournisseur.dateFacture| date("d/m/Y")}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" style="text-align:left; font-size: 16px; border: 0px; ">Devise: {{achat_fournisseur.devise.nomDevise | strtoupper}}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left; font-size: 16px; border: 0px; ">Taux: {{achat_fournisseur.taux |number_format(2,',',' ')}}</td>
+                </tr>
+
+            </tbody>
+            <thead style="background-color:#f2f2f2; width:100%; font-weight:bold;">
+                <tr>
+                    <th style="width: 40%; text-align: center;">Désignation</th>
+                    <th style="width: 14%; text-align: center;">Qtite</th>
+                    <th style="width: 21%; text-align: center;">P.Unitaire</th>
+                    <th style="width: 22%; text-align: center;">P. Total</th>
+                </tr>
+            </thead>                
+            <tbody>
+                {% set cumul_montant = 0 %} 
+                {% for key, liste_reception in liste_receptions %}
+                    {% set total = (liste_reception.prixAchat * liste_reception.quantite) / liste_reception.taux %}
+                    {% set cumul_montant = cumul_montant + total %}
+                    <tr>
+                        <td style="width: 40%; text-align:left">{{ liste_reception.product.designation | ucfirst }}</td>
+                        <td style="width: 14%; text-align: center;">{{ liste_reception.quantite }}</td>
+
+                        <td style="width: 21%; text-align: right; padding-right: 10px;">{{achat_fournisseur.devise.nomDevise == 'gnf' ? (liste_reception.prixAchat// liste_reception.taux)|number_format(0,',',' ') : (liste_reception.prixAchat// liste_reception.taux)|number_format(2,',',' ') }}</td>
+
+                        <td style="width: 22%; text-align: right; padding-right: 10px;">{{achat_fournisseur.devise.nomDevise == 'gnf' ? total|number_format(0,',',' ') : total|number_format(2,',',' ') }}</td>
+                                    
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th colspan="4" height="30"></th>
+                </tr>
+                <tr>
+                    <th colspan="3" style="border: 1px solid black;">Total</th>
+        
+                    <th style="border: 1px solid black; text-align: right; padding-right: 10px">{{achat_fournisseur.devise.nomDevise == 'gnf' ? cumul_montant|number_format(0,',',' ') : cumul_montant|number_format(2,',',' ')}}</th>
+                </tr>
+
+                <tr>
+                    <td colspan="4" style="border: 1px solid black; padding:10px 0px 10px 0px; font-weight:bold;">Solde de vos Comptes à la date du {{ "now"|date("d/m/Y H:i") }}
+                        {% for solde in solde_collaborateur %}
+                            <label style="padding-right: 30px;">{{solde.devise|strtoupper}}: {{solde.devise == 'gnf' ? solde.montant |number_format(0,',',' ') : solde.montant |number_format(2,',',' ') }}</label>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border:0px;"></td>
+                </tr>
+            </tbody>
+            <footer style="position: fixed;bottom: 0; width: 100%;text-align: center;background-color: #f2f2f2;padding: 10px;">
+                <p>Facture saisie par : {{achat_fournisseur.personnel.prenom | ucwords ~ " " ~ achat_fournisseur.personnel.nom | strtoupper ~ " et éditée le " ~ "now"|date("d/m/Y H:i")}}</p>
+            </footer>
+        </table>
+        
+    </body>
+</html>

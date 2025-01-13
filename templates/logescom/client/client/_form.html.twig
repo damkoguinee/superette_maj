@@ -1,0 +1,77 @@
+{{ form_errors(form) }}
+{{ form_start(form) }}
+    {% if referer is defined %}
+        <input type="hidden" name="retour" value="{{referer}}">
+    {% endif %}
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.typeClient) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.statut) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.username) }}
+        </div>               
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.password) }}
+        </div>
+    </div>
+
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form_user.lieuVente) }}
+        </div>
+        <div class="col-sm-12 col-md-5">
+            {{ form_row(form_user.nom) }}
+        </div>
+        <div class="col-sm-12 col-md-5">
+            {{ form_row(form_user.prenom) }}
+        </div> 
+    </div>
+
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.telephone) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.limitCredit) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.email) }}
+        </div>  
+    </div>
+    {% if user.id is empty %}
+        <div class="row">
+            {% for devise in devises %}            
+                <div class="col-sm-12 col-md-3">
+                    <label for="">Solde Init {{devise.nomDevise|strtoupper}} </label>
+                    <input type="number" name="{{devise.id}}"  class="form form-control">
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form_user.adresse) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.ville) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form_user.region) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form_user.pays) }}
+        </div>   
+    </div>
+
+    <div class="row mb-1"> 
+        <div class="col-sm-6 col-md-4">
+            {{ form_row(form.document) }}
+        </div>        
+    </div>
+
+    <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(form) }}

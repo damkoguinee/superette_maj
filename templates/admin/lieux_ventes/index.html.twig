@@ -1,0 +1,35 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}LieuVentes index{% endblock %}
+
+{% block body %}
+    <h1>LieuVentes index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Designation</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for lieu_vente in lieu_ventes %}
+            <tr>
+                <td>{{ lieu_vente.id }}</td>
+                <td>{{ lieu_vente.designation }}</td>
+                <td>
+                    <a href="{{ path('app_admin_lieux_ventes_show', {'id': lieu_vente.id}) }}">show</a>
+                    <a href="{{ path('app_admin_lieux_ventes_edit', {'id': lieu_vente.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_lieux_ventes_new') }}">Create new</a>
+{% endblock %}

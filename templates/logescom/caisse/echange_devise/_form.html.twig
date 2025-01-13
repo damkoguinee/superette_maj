@@ -1,0 +1,114 @@
+{{ form_errors(form) }}
+{{ form_start(form) }}
+
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-12">
+            <div class="d-flex">
+                <label class="form-label mx-2" for="">Devise</label>
+                {{ form_widget(form.deviseOrigine) }}
+                <span class="mx-2">vers</span>
+                {{ form_widget(form.deviseDestination) }}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.montantOrigine) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.taux) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            <div class="mt-4 fw-bold fs-3 text-danger" id="result"></div>
+        </div>
+    </div>
+
+    <div class="row mb-1">
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.caisseOrigine) }}
+        </div>
+
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.caisseDestination) }}
+        </div>
+        <div class="col-sm-12 col-md-6">
+            {{ form_row(form.commentaire) }}
+        </div>
+    </div>
+    <div class="row mb-1">
+        
+        <div class="col-sm-12 col-md-3">
+            {{ form_row(form.dateEchange) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form.document) }}
+        </div>
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Valider') }}</button>
+{{ form_end(form) }}
+
+<script>
+    function formatMontant(input) {
+        // Supprimer tous les espaces existants
+        let valueWithoutSpaces = input.value.replace(/\s/g, '');
+        // Utiliser une expression régulière pour ajouter un espace après chaque groupe de trois chiffres, sauf pour le premier groupe
+        let formattedValue = valueWithoutSpaces.replace(/\B(?=(\d{3})+(?!\d))/g, ' '); // Ajouter un espace pour les milliers
+        input.value = formattedValue;
+    }
+
+
+    // Wait for the document to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the input fields
+        var montantOrigineField = document.getElementById('{{ form.montantOrigine.vars.id }}');
+        var tauxField = document.getElementById('{{ form.taux.vars.id }}');
+        var deviseDestinationSelect = document.getElementById('echange_devise_deviseDestination');
+        var resultDiv = document.getElementById('result');
+
+        // Function to parse montantOrigine without spaces
+        function parseMontantOrigine() {
+            // Remove spaces between digits
+            let valueWithoutSpaces = montantOrigineField.value.replace(/\s/g, '');
+            // Convert to floating point number
+            return parseFloat(valueWithoutSpaces);
+        }
+
+        function parseTaux() {
+            // Remove spaces between digits
+            let valueWithoutSpaces = tauxField.value.replace(/\s/g, '');
+            // Convert to floating point number
+            return parseFloat(valueWithoutSpaces);
+        }
+
+        // Function to format result as currency based on selected deviseDestination
+        function formatCurrency(amount) {
+            // Format the number as currency without specifying the currency code
+            return amount.toLocaleString('fr-FR');
+        }
+
+        // Calculate the result whenever either input field or deviseDestination changes
+        var calculateResult = function() {
+            var montantOrigine = parseMontantOrigine();
+            var taux = parseTaux();
+            var result = montantOrigine / taux;
+
+            // Display the formatted result in the result div without specifying the currency code
+            resultDiv.innerText = formatCurrency(result);
+        };
+
+        // Attach the calculateResult function to the change event of both fields
+        montantOrigineField.addEventListener('input', function() {
+            // Remove spaces and update the field
+            formatMontant(montantOrigineField);
+            // Recalculate the result
+            calculateResult();
+        });
+
+        tauxField.addEventListener('input', calculateResult);
+        deviseDestinationSelect.addEventListener('change', calculateResult);
+
+        // Calculate the result initially
+        calculateResult();
+    });
+</script>
+

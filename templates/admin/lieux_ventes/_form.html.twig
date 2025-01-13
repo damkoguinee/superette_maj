@@ -1,0 +1,65 @@
+{{ form_errors(form) }}
+{{ form_start(form) }}
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form.entreprise) }}
+        </div>
+
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form.gestionnaire) }}
+        </div>
+        
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.telephone) }}
+        </div>
+        <div class="col-sm-12 col-md-2">
+            {{ form_row(form.email) }}
+        </div>    
+    </div>
+    <div class="row mb-1"> 
+        <div class="col-sm-12 col-md-4">
+            {{ form_row(form.lieu) }}
+        </div> 
+        <div class="col-sm-12 col-md-8">
+            {{ form_row(form.adresse) }}
+        </div> 
+    </div>
+
+    <div class="row mb-1">
+
+        <div class="col-sm-12 col-md-8">
+            {{ form_row(form.ville) }}
+        </div> 
+
+        <div class="col-sm-12 col-md-8">
+            {{ form_row(form.region) }}
+        </div> 
+        <div class="col-sm-12 col-md-8">
+            {{ form_row(form.pays) }}
+        </div> 
+    </div>
+    {{ form_row(form.latitude) }}
+    {{ form_row(form.longitude) }}
+
+    {# Ajoutez les champs de latitude et longitude comme des éléments HTML #}
+    <input type="hidden" id="latitude" name="{{ form.latitude.vars.full_name }}" value="{{ form.latitude.vars.value }}">
+    <input type="hidden" id="longitude" name="{{ form.longitude.vars.full_name }}" value="{{ form.longitude.vars.value }}">
+    <button class="btn btn-primary px-4 my-2">{{ button_label|default('Enregistrer') }}</button>
+
+{{ form_end(form) }}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Code JavaScript pour obtenir la latitude et la longitude
+    // Vous pouvez utiliser le code de géolocalisation HTML5 ou une API de géocodage
+
+    // Exemple avec la géolocalisation HTML5
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+
+        // Remplir les champs latitude et longitude dans le formulaire
+        $('#latitude').val(latitude);
+        $('#longitude').val(longitude);
+    });
+</script>

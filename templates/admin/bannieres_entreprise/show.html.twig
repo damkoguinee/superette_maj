@@ -1,0 +1,26 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}BannieresEntreprise{% endblock %}
+
+{% block body %}
+    <h1>BannieresEntreprise</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ bannieres_entreprise.id }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ bannieres_entreprise.image }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_bannieres_entreprise_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_bannieres_entreprise_edit', {'id': bannieres_entreprise.id}) }}">edit</a>
+
+    {{ include('admin/bannieres_entreprise/_delete_form.html.twig') }}
+{% endblock %}

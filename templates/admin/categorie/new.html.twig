@@ -1,0 +1,79 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Ajout categorie{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <div id="ajoutForm" class="my-1">
+                <h3 class="text-center">Ajouter une nouvelle Catégorie</h3>
+
+                {{ form_errors(form) }}
+                {{ form_start(form) }}
+                    <div class="row mb-1">
+                        <div class="col-8">{{ form_row(form.nameCategorie) }}</div>
+                        <div class="col-4">{{ form_row(form.priorite) }}</div>
+                        
+
+                    <div>
+                    <div class="row mb-1 mx-1">
+                        <p>Description</p>
+                        <div class="col-sm-12 col-md-12" id="editor"></div>
+                        {{ form(form.description) }}        
+                    </div>
+
+                    <div class="row mb-1">
+                        <div class="col-sm-12 col-md-6">
+                            <label for="dimension">Dimension</label>
+                            <div class="d-flex w-50">
+                                <input class="form-control" type="text" id="newOptionDimension" placeholder="ajout dimension">
+                                <button type="button" id="addOptionDimensionBtn" class="btn btn-primary">+</button>
+                            </div>
+                            <div class="d-flex">
+                                <select class="form-select" name="dimension[]" id="dimension" multiple>
+                                    {# <option value="0.5">0.5</option> #}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6">
+                            <label for="epaisseur">Epaisseur</label>
+                            <div class="d-flex w-50">
+                                <input class="form-control" type="text" id="newOptionEpaisseur" placeholder="ajout épaisseur">
+                                <button type="button" id="addOptionEpaisseurBtn" class="btn btn-primary">+</button>
+                            </div>
+                            <div class="d-flex">
+                                <select class="form-select" name="epaisseur[]" id="epaisseur" multiple>
+                                    {# <option value="0.5">0.5</option> #}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-6">{{ form_row(form.couverture) }}</div>
+                        <div class="col-6">{{ form_row(form.imgProduit) }}</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-primary ">{{ button_label|default('Enregistrer') }}</button>
+                        <a class="btn btn-secondary " href="{{ path('app_admin_categorie_index') }}">Retour</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

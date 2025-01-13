@@ -1,0 +1,27 @@
+twig:
+    file_name_pattern: '*.twig'
+    default_path: '%kernel.project_dir%/templates'
+    form_themes: ["bootstrap_5_layout.html.twig"]
+    date:
+        format: d/m/Y
+    
+    globals:
+        chemin_images_product: "images/img-product/"
+        chemin_images_bannieres: "images/bannieres/"
+        chemin_images_categories: "images/categories/"
+        chemin_images_logos: "images/img-logos/"
+        chemin_img_paie: "images/logo-paie/"
+        chemin_photo_personnel: "personnel/photo/"
+        chemin_identite_personnel: "personnel/identite/"
+        chemin_images_config: "images/config/"
+
+
+    paths:
+        '%kernel.project_dir%/templates/errors': errors
+
+# framework:
+#     error_controller: 'App\Controller\ExceptionController::showException'
+
+when@test:
+    twig:
+        strict_variables: true

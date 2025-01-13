@@ -1,0 +1,30 @@
+{# templates/licence/orange_money.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement par Orange Money{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="h3 mb-4">Paiement par Orange Money</h1>
+        <p class="lead">Votre licence <strong>{{ licence.numeroLicence }}</strong> expire le {{ licence.dateFin|date('d/m/Y') }}.</p>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="msisdn" class="form-label">MSISDN</label>
+            <input type="text" class="form-control" id="msisdn" name="msisdn" required>
+        </div>
+        <div class="mb-3">
+            <label for="agent_code" class="form-label">Agent Code</label>
+            <input type="text" class="form-control" id="agent_code" name="agent_code" required>
+        </div>
+        <div class="mb-3">
+            <label for="pin" class="form-label">PIN</label>
+            <input type="password" class="form-control" id="pin" name="pin" required>
+        </div>
+        <button type="submit" class="btn btn-warning">Payer avec Orange Money</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Categorie{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center">Catégorie {{categorie.nameCategorie}}</h3>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ categorie.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom de la catégorie</th>
+                        <td>{{ categorie.nameCategorie }} <a class="btn btn-info" href="{{ path('app_admin_categorie_edit', {'id': categorie.id}) }}"><i class="fa fa-edit"></i></a></td>
+                    </tr>
+                    {% if categorie.description is not empty %}
+                    
+                        <tr>
+                            <th>Description</th>
+                            <td><div style="height:100px; overflow:auto ">{{ categorie.description|raw }} </div></td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Couverture</th>
+                        <td class="text-start">
+                            {% if categorie.couverture %}                   
+                                <img src="{{asset(chemin_images_categories) ~ categorie.couverture}}" alt="couverture manquante" class="miniature">
+
+                                {# {{categorie.couverture|img("miniature", "couverture manquante")|raw}} #}
+                            {% else %}
+                                <img alt="couverture manquante" class="miniature">
+                            {% endif %} 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Images Produit</th>
+                        <td>
+                            {% if categorie.imgProduit is not empty %}
+                                {% for image in categorie.imgProduit %}
+                                    <img src="{{ asset(chemin_images_product ~ image) }}" alt="image {{ categorie.nameCategorie }}" class="miniature">
+                                {% endfor %}
+                            {% else %}
+                                <img alt="Aucune image" class="miniature">
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table table-bordered table-striped table-hover align-middle">
+                                <thead class="sticky-top bg-light text-center">
+                                    <tr>
+                                        <th colspan="4" class="bg-info">Liste des produits de la catégorie {{ categorie.nameCategorie }} <a class="btn btn-primary" href="{{ path('app_admin_products_new', {categorie: categorie.id}) }}">Ajouter un produit</a></th>
+                                    </tr>
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Référence</th>
+                                        <th>Désignation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, product in products %}
+                    
+                                        <tr>
+                                            <td class="text-center">
+                                                {{ (key)+1 }}
+                                            </td>
+                                            <td>{{ product.reference }}</td>
+                                            <td>{{ product.designation }}</td>
+                                            <td class="text-center">
+                                                <a class="btn btn-success" href="{{ path('app_admin_products_show', {'id': product.id}) }}"><i class="fa fa-eye"></i></a>
+                                                <a class="btn btn-warning" href="{{ path('app_admin_products_edit', {'id': product.id}) }}"><i class="fa fa-edit"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="4">Aucune catégorie trouvée</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pb-4 d-flex justify-content-between">
+                <a class="btn btn-secondary" href="{{ path('app_admin_categorie_index') }}">Retour</a>
+
+                <a class="btn btn-info" href="{{ path('app_admin_categorie_edit', {'id': categorie.id}) }}"><i class="fa fa-edit"></i></a>
+
+                {{ include('_common/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

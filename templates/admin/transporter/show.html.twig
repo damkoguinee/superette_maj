@@ -1,0 +1,45 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Transporter{% endblock %}
+
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <h1>Transporter</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ transporter.id }}</td>
+            </tr>
+            <tr>
+                <th>NomTransporter</th>
+                <td>{{ transporter.nomTransporter }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ transporter.description }}</td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ transporter.prix }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_transporter_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_transporter_edit', {'id': transporter.id}) }}">edit</a>
+
+    {{ include('admin/transporter/_delete_form.html.twig') }}
+{% endblock %}

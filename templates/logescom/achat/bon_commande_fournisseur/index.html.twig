@@ -1,0 +1,78 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}liste des achats{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>
+                        <th class="bg-info" colspan="9">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{path("app_logescom_achat_bon_commande_fournisseur_new", {lieu_vente : lieu_vente.id})}}" class="btn btn-warning">Ajouter un bon de commande</a>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Doc</th>
+                        <th>Date</th>
+                        <th>N°Bon</th>
+                        <th>Libellé</th>
+                        <th>Collaborateur</th>
+                        <th>Montant</th>
+                        <th>Dévise</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, bon_fournisseur in bon_fournisseurs %}
+                    <tr>
+                        <td class="text-center">{{ key + 1 }}</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center">
+                                <a target="_blank" class="btn btn-primary" href="{{ path('app_logescom_achat_bon_commande_fournisseur_ajout_pdf', {'id':  bon_fournisseur.id, 'lieu_vente' : lieu_vente.id }) }}" class="btn btn-secondary"><i class="fa fa-file-pdf fs-3"></i></a>
+
+                                <a target="_blank" class="btn btn-warning mx-1" href="{{ path('app_logescom_achat_bon_commande_fournisseur_ajout_pdf_bon', {'id':  bon_fournisseur.id, 'lieu_vente' : lieu_vente.id }) }}" class="btn btn-secondary"><i class="fa fa-file-pdf fs-4"></i></a>
+
+                            </div>
+                        </td>
+                        <td class="text-center">{{ bon_fournisseur.dateSaisie ? bon_fournisseur.dateSaisie|date('d/m/Y') : '' }}</td>
+                        <td class="text-center">{{ bon_fournisseur.numeroBon }}</td>
+                        <td>{{ bon_fournisseur.commentaire|ucfirst }}</td>
+                        <td>{{ bon_fournisseur.fournisseur.prenom|ucwords ~ " " ~ bon_fournisseur.fournisseur.nom|strtoupper }}</td>
+                        <td class="text-end">{{ bon_fournisseur.devise.nomDevise == 'gnf' ? bon_fournisseur.montant|number_format(0,',',' ') : bon_fournisseur.montant|number_format(2,',',' ') }}</td>
+                        <td class="text-center">{{ bon_fournisseur.devise.nomDevise|strtoupper}}</td>
+                        <td class="text-center">
+                            <a class="btn btn-warning" href="{{ path('app_logescom_achat_bon_commande_fournisseur_ajout', {'id': bon_fournisseur.id, lieu_vente : lieu_vente.id}) }}">Réceptionner</a>
+                            <a class="btn btn-success" href="{{ path('app_logescom_achat_bon_commande_fournisseur_show', {'id': bon_fournisseur.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9">Aucun bon trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

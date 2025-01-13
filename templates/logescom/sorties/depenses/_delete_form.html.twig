@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_logescom_sorties_depenses_delete', {id : depense.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('Etes-vous sûr de vouloir sipprimer cette depense ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ depense.id) }}">
+    <button class="btn btn-danger">Supprimer</button>
+</form>

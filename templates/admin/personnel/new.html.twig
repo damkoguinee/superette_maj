@@ -1,0 +1,27 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}ajout personnel{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <h3 class="text-center mt-2">Ajouter un personnel</h3>
+
+            {{ include('admin/personnel/_form.html.twig') }}
+
+            <a class="btn btn-light mt-5" href="{{ path('app_admin_personnel_index') }}">Retour</a>
+        </div>
+    </div>
+{% endblock %}

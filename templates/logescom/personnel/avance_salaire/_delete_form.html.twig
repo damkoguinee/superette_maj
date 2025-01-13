@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_logescom_personnel_avance_salaire_delete', {'id': avance_salaire.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('Etes vous sûr de vouloir supprimer ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avance_salaire.id) }}">
+    <button class="btn btn-danger">Annuler</button>
+</form>

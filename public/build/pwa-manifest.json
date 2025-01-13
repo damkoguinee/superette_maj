@@ -1,0 +1,51 @@
+{
+  "icons": [
+    {
+      "src": "/public/build/icons/icon_512x512.555d241f11effa7b8bcac4eb5db7c428.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/build/icons/icon_256x256.15a884a05097cbbb77c6cb6ec6b9c89f.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/build/icons/icon_512x512.555d241f11effa7b8bcac4eb5db7c428.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/build/icons/icon_192x192.eeff1d664714e7eb529b56c095d74fa6.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "name": "Logescom-ms",
+  "short_name": "Damko",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": "/public/logescom/home/",
+  "description": "Application de gestion commerciale.",
+  "background_color": "#ffffff",
+  "theme_color": "#317EFB",
+  "scope": "/",
+  "id": "/appLogescom",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "screenshots": [
+    {
+      "src": "/public/images/config/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/public/images/config/screenshot-mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png"
+    }
+  ]
+}

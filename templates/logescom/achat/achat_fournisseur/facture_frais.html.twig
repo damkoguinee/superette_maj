@@ -1,0 +1,451 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "reception" and k != "id_stock") | url_encode %}
+
+{% block title %}traitement facture frais{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+
+    {% set nbrePages = stocks.nbrePages %}
+    {% set pageEncours = stocks.pageEncours %} 
+    {% set id = lieu_vente.id %}
+
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10" style="overflow:auto;">
+            {% include "_common/_messages_flash.html.twig" %}
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th class="bg-info" colspan="8">
+                            <div class="d-flex justify-content-between">
+                                <form  class="form"  method="GET">
+                                    <select onChange="this.form.submit()" name="magasin" id="" class="form-select">
+                                        <option value="{{magasin.id}}">{{magasin.nomStock}}</option>
+
+                                        {% for liste_stock in liste_stocks %}                            
+                                            <option value="{{liste_stock.id}}">{{liste_stock.nomStock}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                                <h6 class="text-center bg-warning">Ajouter des produits sur la commande N° {{achat_fournisseur.numeroFacture}} / Taux : {{achat_fournisseur.taux|number_format(2,',',' ')}}</h6>
+
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-white">N°</th>
+                        <th class="text-white">Désignation</th>
+                        <th class="text-white">Qtité</th>
+                        <th class="text-white">P.Achat</th>
+                        <th class="text-white">Frais</th>
+                        <th class="text-white">P.Vente</th>
+                        <th class="text-white">Commentaire</th>
+                        <th class="text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, stock in stocks.data %}                        
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                            </td>
+                            <td>{{ stock.products.designation }}</td>
+                            <form class="form" method="POST" action="{{ path('app_logescom_achat_achat_fournisseur_facture_frais', {id : achat_fournisseur.id, lieu_vente: lieu_vente.id}) }}">
+                                <td class="text-end">
+                            
+                                    {% if is_granted("ROLE_STOCK") %}     
+                                        <input type="number" name="quantite" placeholder="{{ stock.quantite }}" class="form-control text-center mx-1">
+
+                                        <input type="hidden" name="id_stock" value="{{stock.id}}">
+                                        <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                                        <input class="form-control" type="hidden" name="search" value="{{search}}">
+                                        <input class="form-control" type="hidden" name="pageEncours" value="{{pageEncours}}">
+                                        <input type="hidden" name="ajout" value="appro_initial">
+                                        
+                                    {% else %}
+                                        {{ stock.quantite }}                                    
+                                    {% endif %}
+                                </td>
+
+                                <td class="text-end">   
+                                    <input type="text" name="prix_achat" required placeholder = "{{ stock.prixAchat|number_format(0,',',' ') }}" class="form-control text-center mx-1">
+                                </td>
+
+                                <td class="text-end">  <input type="text" name="frais" class="form-control text-center mx-1"></td>
+
+                                <td class="text-end">   
+                                    <input type="text" name="prix_vente" placeholder = "{{ stock.prixVente|number_format(0,',',' ') }}" class="form-control text-center mx-1">
+                                </td>
+                                <td class="text-end">
+                                    <input type="text" name="commentaire"  class="form-control text-center mx-1"> 
+                                </td>
+                            
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        {% if is_granted("ROLE_STOCK") %}
+                                            <button class="btn btn-primary mx-1">Ajouter</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </form> 
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">Aucun produit disponible</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>               
+                
+                {% set path = 'app_logescom_achat_achat_fournisseur_facture_frais'  %}
+                {% if nbrePages > 1 %}                    
+    
+                    {% if nbrePages %}
+                        <nav aria-label="Page navigation example ">
+                            <ul class="pagination justify-content-start">
+                                {% if pageEncours > 1 %}
+                                    <li class="page-item ">
+                                        <a class="page-link" href="{{path(path, {id : achat_fournisseur.id, lieu_vente : id, pageEncours : (pageEncours - 1), magasin : magasin.id, search : search})}}">&lt;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+                                {% endif %}
+                                {% for page in 1..nbrePages %}                
+                                    <li class="page-item {{ ( page == pageEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {id : achat_fournisseur.id, lieu_vente : id, pageEncours : page, magasin : magasin.id, search : search})}}">{{page}}</a></li>
+                                {% endfor %}
+                                {% if pageEncours < nbrePages %}
+                                    <li class="page-item "><a class="page-link" href="{{path(path, {id : achat_fournisseur.id, lieu_vente : id,pageEncours : pageEncours + 1, magasin : magasin.id, search : search} ) }}">&gt;</a></li>
+                                {% else %}
+                                    <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+                                {% endif %}
+                                </li>
+                            </ul>
+                        </nav>
+    
+                    {% endif %}
+    
+                {% endif %}
+            </table>
+
+
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-success text-center">
+                    <tr>
+                        <th class="bg-success" colspan="10">
+                            Liste des produits ajoutés à la commande N° {{achat_fournisseur.numeroFacture}}
+                            <a target="_blank" class="btn btn-warning" href="{{ path('app_logescom_achat_achat_fournisseur_reception_pdf', {'id':  achat_fournisseur.id, 'lieu_vente' : lieu_vente.id }) }}" class="btn btn-secondary"><i class="fa fa-file-pdf fs-4"></i></a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-white">N°</th>
+                        <th class="text-white">Date</th>
+                        <th class="text-white">Désignation</th>
+                        <th class="text-white">Qtité</th>
+                        <th class="text-white">P. Achat</th>
+                        <th class="text-white">P.Total</th>
+                        <th class="text-white">Frais</th>
+                        <th class="text-white">Commentaire</th>
+                        <th class="text-white">Traité par</th>
+                        <th class="text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set cumul_achat = 0 %} 
+                    {% set cumul_total = 0 %} 
+                    {% set cumul_quantite = 0 %} 
+                    {% set cumul_frais = 0 %} 
+                    {% for key, liste_reception in liste_receptions %} 
+                        {% set total = (liste_reception.prixAchat * liste_reception.quantite) / liste_reception.taux %}
+                        {% set cumul_achat = cumul_achat + liste_reception.prixAchat %}                       
+                        {% set cumul_total = cumul_total + liste_reception.prixAchat * liste_reception.quantite %}                       
+                        {% set cumul_quantite = cumul_quantite + liste_reception.quantite %}                       
+                        {% set cumul_frais = cumul_frais + liste_reception.frais * liste_reception.quantite %}                       
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class="text-center">{{liste_reception.dateSaisie|date("d/m/Y")}}</td>
+                            <td>{{ liste_reception.product.designation }}</td>
+                            <td class="text-center">{{liste_reception.quantite}}</td>
+                            <td class="text-end">{{achat_fournisseur.devise.nomDevise == 'gnf' ? (liste_reception.prixAchat)|number_format(0,',',' ') : (liste_reception.prixAchat)|number_format(2,',',' ')}}</td>
+                            <td class="text-end">{{achat_fournisseur.devise.nomDevise == 'gnf' ? (liste_reception.prixAchat * liste_reception.quantite)|number_format(0,',',' ') : (liste_reception.prixAchat * liste_reception.quantite)|number_format(2,',',' ')}}</td>
+                            <td class="text-center">{{liste_reception.frais|number_format(0,',',' ')}}</td>
+
+                            <td>{{liste_reception.commentaire|ucwords}}</td>
+                            <td>{{liste_reception.personnel.prenom|ucwords}}</td>
+                            <td class="text-center">
+                                {% if is_granted("ROLE_STOCK") and achat_fournisseur.etatReception != 'receptionner' %}
+                                    <form method="post" action="{{path("app_logescom_achat_achat_fournisseur_facture_frais_ajout_delete", {id : liste_reception.id, lieu_vente : lieu_vente.id})}}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ liste_reception.id) }}">
+                                        <button class="btn btn-danger">Annuler</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="10">Aucun produit réceptionné</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-center">Totaux</th>
+                        <th class="text-center">{{ cumul_quantite|number_format(0,',',' ')}}</th>
+                        <th class="text-end">{{achat_fournisseur.devise.nomDevise == 'gnf' ? cumul_achat|number_format(0,',',' ') : cumul_achat|number_format(2,',',' ')}}</th>
+                        <th class="text-end">{{achat_fournisseur.devise.nomDevise == 'gnf' ? cumul_total|number_format(0,',',' ') : cumul_total|number_format(2,',',' ')}}</th>
+                        <th class="text-end">{{ cumul_frais|number_format(0,',',' ')}}</th>
+
+                    </tr>
+                </tfoot>           
+                
+            </table>
+
+            <form class="p-4 bg-warning rounded">
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <label class="form-label" for="numeroFacture">N° Facture/Bl:</label>
+                        <input type="text" class="form-control" id="numeroFacture" value="{{ achat_fournisseur.numeroFacture|strtoupper }}" readonly>
+                        <input type="hidden" name="factureId" value="{{ achat_fournisseur.id }}">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="devise">Devise:</label>
+                        <input type="text" class="form-control" id="devise" value="{{ achat_fournisseur.devise.nomDevise|strtoupper }}" readonly>
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="taux">Taux:</label>
+                        <input type="text" class="form-control" id="taux" value="{{ achat_fournisseur.taux }}" readonly>
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="dateFacture">Date Facture:</label>
+                        <input type="text" class="form-control" id="dateFacture" value="{{ achat_fournisseur.dateFacture|date('d/m/Y') }}" readonly>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <label class="form-label" for="montantFacture">Montant de la Facture:</label>
+                        <input type="text" class="form-control" id="montantFacture" value="{{ achat_fournisseur.devise.nomDevise == 'gnf' ? cumul_total|number_format(0, ',', ' ') : cumul_total|number_format(2, ',', ' ') }}" readonly>
+                        <input type="hidden" name="montantFacture" value="{{ cumul_total }}">
+                    </div>
+                    <div class="col-3">
+                        <label class="form-label" for="fraisTotaux">Frais totaux:</label>
+                        <input type="text" class="form-control" id="fraisTotaux" value="{{ cumul_frais|number_format(0, ',', ' ') }}" readonly>
+                        <input type="hidden" name="fraisTotaux" value="{{ cumul_frais }}">
+                    </div>
+                </div>
+                {% if achat_fournisseur.etatReception != 'receptionner' %}
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="form-label" for="FraisTransport">Frais de transport:</label>
+                            <input class="form-control" type="text" id="fraisTransport" name="fraisTransport">
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label" for="transporteur">Transporteurs:</label>
+                            <select name="transporteur" id="transporteur" class="form-select">
+                            <option value=""></option>
+                                {% for transporteur in transporteurs %}
+                                    <option value="{{ transporteur.user.id }}">{{ transporteur.user.prenom|ucfirst ~ " " ~ transporteur.user.nom|strtoupper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="form-label" for="FraisTransitaire">Frais de transitaire:</label>
+                            <input class="form-control" type="text" id="fraisTransitaire" name="fraisTransitaire" >
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label" for="transitaire">Transitaires:</label>
+                            <select name="transitaire" id="transitaire" class="form-select">
+                                <option value=""></option>
+                                {% for transitaire in transitaires %}
+                                    <option value="{{ transitaire.user.id }}">{{ transitaire.user.prenom|ucfirst ~ " " ~ transitaire.user.nom|strtoupper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="form-label" for="fraisDouane">Frais de douane:</label>
+                            <input class="form-control" type="text" id="fraisDouane" name="fraisDouane">
+                        </div>
+                        <div class="col-3">
+                            <label class="form-label" for="douanier">Douaniers:</label>
+                            <select name="douanier" id="douanier" class="form-select">
+                                <option value=""></option>
+                                {% for douanier in douaniers %}
+                                    <option value="{{ douanier.user.id }}">{{ douanier.user.prenom|ucfirst ~ " " ~ douanier.user.nom|strtoupper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label class="form-label" for="fraisAutre">Autres Frais:</label>
+                            <input class="form-control" type="text" id="fraisAutre" name="fraisAutre" >
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-3">
+                            <label class="form-label" for="livraison">Lieu de livraison:</label>
+                            <select name="livraison" id="livraison" class="form-select">
+                                {% for liste_stock in liste_stocks %}
+                                    <option value="{{ liste_stock.id }}">{{ liste_stock.nomStock|ucfirst }}</option>
+                                {% endfor %}
+                                <option value="multiple">Multiples</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                {% endif %}
+            </form>
+
+
+
+            <table class="table table-bordered table-striped table-hover align-middle my-4">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-info text-white" colspan="10">
+                            Réception des produits de la commande N° {{achat_fournisseur.numeroFacture}}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité Cmd</th>
+                        <th class="bg-info text-white">Livré</th>
+                        <th class="bg-info text-white">Reste à Livrer</th>
+                        <th class="bg-info text-white">Livraison</th>
+                        <th class="bg-info text-white">Choix Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, commande in commandes %}
+                        {% set reste = commande.vente.quantite - commande.vente.quantiteLivre %}
+
+                        <form method="post" action="" onsubmit="return confirm('confirmez-vous cette livraison ?');">
+
+                            <tr>
+                                <td>{{ commande.vente.product.reference|ucwords }}</td>
+
+                                <td>{{ commande.vente.product.designation|ucwords }}</td>
+
+                                <td class="text-center" >{{ commande.vente.quantite }}</td>
+
+                                <td class="text-center" >{{ commande.vente.quantiteLivre }}</td>
+
+                                <td class="text-center" >{{ reste }}</td>
+                                {% if reste != 0 %}
+                                    <td class="text-center" ><input required class="form-control text-center" type="text" name="quantite" value={{reste}} min="0" max="{{reste}}"></td>
+
+                                    <td class="text-center" >
+                                        <input type="hidden" name="id_product" value="{{commande.vente.product.id}}">
+                                        <input type="hidden" name="livraison" value="{{commande.vente.product.id}}">
+                                        <input type="hidden" name="prix_achat" value="{{commande.vente.prixAchat}}">
+                                        <input type="hidden" name="prix_revient" value="{{commande.vente.prixRevient}}">
+                                        <input type="hidden" name="liste_achat" value="{{commande.vente.id}}">
+                                        <select required class="form-select" name="id_stock" id="">
+                                            {% for stock in commande.stocks %}
+                                                <option value="{{stock.id_stock}}">{{stock.nom|ucfirst ~ " " ~ stock.totalQuantite}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    
+                                    <td class="text-center" ><input class="form-control text-center" type="text" name="commentaire"></td>
+                                    <td class="text-center" ><input class="form-control text-center" type="date" max="{{"now"|date("Y-m-d")}}" name="date" value="{{"now"|date("Y-m-d")}}"></td>
+
+                                    <td class="text-center"><button class="btn btn-success">Livrer</button></td>
+                                {% else %}
+                                    <td colspan="5" class="text-success text-center">Livraison terminée</td>
+                                {% endif %}
+
+                            </tr>
+                        </form>
+                    {% endfor %}
+
+                    
+                </tbody>
+            </table>
+
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-info text-white" colspan="8">Liste des réceptions de la facture N° {{achat_fournisseur.numeroFacture|strtoupper}}</th>
+                    </tr>
+                    <tr>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité Livré</th>
+                        <th class="bg-info text-white">Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">Livré par</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, livraison in livraisons %}
+
+                        <form method="post" action="{{ path('app_logescom_achat_achat_fournisseur_livraison_multiple_delete', {'id': livraison.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('confirmez-vous cette livraison ?');">
+
+                            <tr>
+                                <td class="text-center" >{{ livraison.dateSaisie|date("d/m/Y") }}</td>
+
+                                <td>{{ livraison.listeProductAchat.product.reference|ucwords }}</td>
+
+                                <td>{{ livraison.listeProductAchat.product.designation|ucwords }}</td>
+
+                                <td class="text-center" >{{ livraison.quantite }}</td>
+
+                                <td class="text-center" >{{ livraison.stock.nomStock|ucfirst }}</td>
+
+                                <td>{{ livraison.commentaire|ucfirst }}</td>
+                                <td>{{ livraison.personnel.prenom|ucfirst ~ " le " ~ livraison.dateSaisie|date("d/m/Y") }}</td>
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livraison.id) }}">
+                                <td class="text-center">
+                                {% if is_granted("ROLE_SUPPRESSION") and livraison.quantite > 0 %}
+                                    <button class="btn btn-danger">Annuler</button></td>
+                                {% endif %}
+                            </tr>
+                        </form>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}

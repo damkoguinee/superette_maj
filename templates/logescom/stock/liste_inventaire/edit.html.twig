@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ListeInventaire{% endblock %}
+
+{% block body %}
+    <h1>Edit ListeInventaire</h1>
+
+    {{ include('logescom/stock/liste_inventaire/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_stock_liste_inventaire_index') }}">back to list</a>
+
+    {{ include('logescom/stock/liste_inventaire/_delete_form.html.twig') }}
+{% endblock %}

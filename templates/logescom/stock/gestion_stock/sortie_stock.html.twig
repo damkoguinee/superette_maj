@@ -1,0 +1,134 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}livraison facture{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_stock.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-warning text-white" colspan="7">
+                            <div class='d-flex justify-content-between'>
+                                <div>Effectuez une sortie de stcok</div>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité Cmd</th>
+                        <th class="bg-info text-white">Choix Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, commande in data %}
+
+                        <form method="post" onsubmit="return confirm('confirmez-vous cette sortie ?');">
+
+                            <tr>
+                                <td>{{ commande.product.reference|ucwords }}</td>
+
+                                <td>{{ commande.product.designation|ucwords }}</td>
+                                
+                                <td class="text-center" ><input required class="form-control text-center" type="text" name="qtite"  min="0"></td>
+
+                                <td class="text-center" >
+                                    <input type="hidden" name="id_product" value="{{commande.product.id}}">
+                                    <select required class="form-select" name="stock" id="">
+                                        {% for stock in commande.stocks %}
+                                            {% if stock.totalQuantite > 0 %}
+                                                <option value="{{stock.id_stock}}">{{stock.nom|ucfirst ~ " " ~ stock.totalQuantite}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </td>                                    
+                                <td class="text-center" ><input class="form-control text-center" type="text" name="commentaire"></td>
+                                
+                                <td class="text-center" ><input class="form-control text-center" type="date" max="{{"now"|date("Y-m-d")}}" name="date" value="{{"now"|date("Y-m-d")}}"></td>
+
+                                <td class="text-center"><button name="valider" value="valider" class="btn btn-success">Valider</button></td>
+                               
+
+                            </tr>
+                        </form>
+                    {% endfor %}
+
+                    
+                </tbody>
+            </table>
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+
+                <thead class="sticky-top bg-info text-white text-center">
+                    <tr>
+                        <th class="bg-success fw-bold text-white" colspan="8">Liste des sorties stock</th>
+                    </tr>
+                    <tr>
+                        <th class="bg-info text-white">Date</th>
+                        <th class="bg-info text-white">Réference</th>
+                        <th class="bg-info text-white">Désignation</th>
+                        <th class="bg-info text-white">Qtité</th>
+                        <th class="bg-info text-white">Stock</th>
+                        <th class="bg-info text-white">Commentaire</th>
+                        <th class="bg-info text-white">traité par</th>
+                        <th class="bg-info text-white">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, livraison in sorties %}
+
+                        <form method="post" action="{{ path('app_logescom_stock_gestion_stock_sortie_delete', {'id': livraison.id, lieu_vente : lieu_vente.id}) }}" onsubmit="return confirm('confirmez-vous cette opération ?');">
+
+                            <tr>
+                                <td class="text-center" >{{ livraison.dateOperation|date("d/m/Y") }}</td>
+
+                                <td>{{ livraison.product.reference|ucwords }}</td>
+
+                                <td>{{ livraison.product.designation|ucwords }}</td>
+
+                                <td class="text-center" >{{ livraison.quantite }}</td>
+
+                                <td class="text-center" >{{ livraison.stock.nomStock|ucfirst }}</td>
+
+                                <td>{{ livraison.commentaire|ucfirst }}</td>
+                                <td>{{ livraison.saisiePar.prenom|ucfirst ~ " le " ~ livraison.dateSaisie|date("d/m/Y") }}</td>
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livraison.id) }}">
+                                <td class="text-center">
+                                {% if  livraison.quantite > 0 %}
+                                    <button class="btn btn-danger">Annuler</button></td>
+                                {% endif %}
+                            </tr>
+                        </form>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            
+        </div>
+    </div>
+{% endblock %}

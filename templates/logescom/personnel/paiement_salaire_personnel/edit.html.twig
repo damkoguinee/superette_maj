@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit PaiementsSalairesPersonnel{% endblock %}
+
+{% block body %}
+    <h1>Edit PaiementsSalairesPersonnel</h1>
+
+    {{ include('comptable/paiements_salaires_personnel/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_logescom_personnel_paiements_salaires_personnel_index' , {lieu_vente : lieu_vente.id}) }}">back to list</a>
+
+    {{ include('comptable/paiements_salaires_personnel/_delete_form.html.twig') }}
+{% endblock %}

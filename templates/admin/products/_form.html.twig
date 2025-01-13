@@ -1,0 +1,66 @@
+
+
+    {{form_errors(productsForm)}}
+        {{form_start(productsForm)}}
+        <div class="row">
+            <div class="col-sm-12 col-md-3">
+                {{form_row(productsForm.categorie)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.dimension)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.epaisseur)}}
+            </div>
+            <div class="col-sm-12 col-md-3">
+                {{form_row(productsForm.origine)}}
+            </div>
+
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.type)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.reference)}}
+            </div>
+            <div class="col-sm-12 col-md-6">
+                {{form_row(productsForm.designation)}}
+            </div>
+            <div class="col-sm-12 col-md-4">
+                {{form_row(productsForm.codeBarre)}}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+                {{form_row(productsForm.typeProduit)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.nbrePiece)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.nbrePaquet)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.tva)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.prixVente)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.nbreVente)}}
+            </div>
+            <div class="col-sm-12 col-md-4">
+                {{form_row(productsForm.statut)}}
+            </div>
+            <div class="col-sm-12 col-md-2">
+                {{form_row(productsForm.statutComptable)}}
+            </div>
+            <input type="hidden" name="categorie" value="{{categorieId.id}}">
+        </div>
+        <button type="submit" class="btn btn-success my-2">Modifier</button>
+
+    {{form_end(productsForm)}}

@@ -1,0 +1,64 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}commandes{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="container-fluid">
+        <div class="row">
+            {{include("_common/_nav_admin.html.twig")}}
+            <div class="col-sm-12 col-md-10">
+                <h3 class="text-center">Démandes en-cours</h3>
+                <table class="table table-bordered table-striped table-hover align-middle">
+                    <thead class="sticky-top bg-light text-center">
+                        <tr>
+                            <th>N°</th>
+                            <th>identifiant</th>
+                            <th>Société</th>
+                            <th>Vendeur</th>
+                            <th>Contact</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for key, listeVendeur in listeVendeursinActif %}
+                        
+                        <tr>
+                            <td class="text-center">{{ (key + 1) }}</td>               
+                            <td>{{ listeVendeur.idShop }}</td>               
+                            <td class="text-center">{{ listeVendeur.nomBoutique }}</td>               
+                            <td class="text-center">{{ listeVendeur.user.prenom ~ " " ~ listeVendeur.user.nom }}</td>               
+                            <td class="text-center">{{ listeVendeur.user.telephone }}</td>               
+                            <td class="text-center">{{ listeVendeur.statut }}</td>
+
+                            <td class="text-center">
+                                <a class="btn btn-success" href="{{ path('app_admin_ventes_show', {'id': listeVendeur.id}) }}"><i class="fa fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6">Aucune commande trouvée</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block contact %}{% endblock %}
+{% block collaborateurs %}{% endblock %}
+
+{% block footer %}{% endblock %}

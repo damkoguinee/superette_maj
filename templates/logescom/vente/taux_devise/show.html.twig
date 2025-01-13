@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TauxDevise{% endblock %}
+
+{% block body %}
+    <h1>TauxDevise</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ taux_devise.id }}</td>
+            </tr>
+            <tr>
+                <th>Taux</th>
+                <td>{{ taux_devise.taux }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_vente_taux_devise_index') }}">back to list</a>
+
+    <a href="{{ path('app_logescom_vente_taux_devise_edit', {'id': taux_devise.id}) }}">edit</a>
+
+    {{ include('logescom/vente/taux_devise/_delete_form.html.twig') }}
+{% endblock %}

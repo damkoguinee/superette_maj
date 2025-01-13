@@ -1,0 +1,11 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}New LiaisonProduit{% endblock %}
+
+{% block body %}
+    <h1>Create new LiaisonProduit</h1>
+
+    {{ include('admin/liaison_produit/_form.html.twig') }}
+
+    <a href="{{ path('app_admin_liaison_produit_index') }}">back to list</a>
+{% endblock %}

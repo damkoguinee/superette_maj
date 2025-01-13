@@ -1,0 +1,83 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}detail de la facture{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Etat de la Facture</th>
+                        <td>{{ achat_fournisseur.etatPaiement|ucwords }}</td>
+                    </tr>
+                    <tr>
+                        <th>Collaborateur</th>
+                        <td>{{ achat_fournisseur.fournisseur.prenom|ucwords ~ " " ~ achat_fournisseur.fournisseur.nom|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numero Facture</th>
+                        <td>{{ achat_fournisseur.numeroFacture }}</td>
+                    </tr>
+                    <tr>
+                        <th>Libéllé</th>
+                        <td>{{ achat_fournisseur.typeProduct|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Commentaire</th>
+                        <td>{{ achat_fournisseur.commentaire|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Montant TTC</th>
+                        <td>{{ (achat_fournisseur.devise.nomDevise == 'gnf' ? achat_fournisseur.montant|number_format(0,',',' ') : achat_fournisseur.montant|number_format(2,',',' ')) ~ " "~ achat_fournisseur.devise.nomDevise| strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>TVA</th>
+                        <td>{{ (achat_fournisseur.devise.nomDevise == 'gnf' ? achat_fournisseur.tva|number_format(0,',',' ') : achat_fournisseur.tva|number_format(2,',',' ')) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Taux</th>
+                        <td>{{ achat_fournisseur.taux|number_format(2,',',' ')}}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de la facture</th>
+                        <td>{{ achat_fournisseur.dateFacture ? achat_fournisseur.dateFacture|date('d/m/Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de saisie</th>
+                        <td>{{ achat_fournisseur.dateSaisie ? achat_fournisseur.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Saisie par</th>
+                        <td>{{ achat_fournisseur.personnel.prenom|ucwords ~ " " ~ achat_fournisseur.personnel.nom|strtoupper }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-light" href="{{ path('app_logescom_achat_achat_fournisseur_index', {lieu_vente : lieu_vente.id}) }}">Retour</a>
+                {% if is_granted("ROLE_MODIFICATION") %}
+                    <a class="btn btn-warning" href="{{ path('app_logescom_achat_achat_fournisseur_edit', {'id': achat_fournisseur.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                {% endif %}
+                {% if liste_receptions is empty and is_granted("ROLE_SUPPRESSION") %}
+                    {{ include('logescom/achat/achat_fournisseur/_delete_form.html.twig') }}
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}

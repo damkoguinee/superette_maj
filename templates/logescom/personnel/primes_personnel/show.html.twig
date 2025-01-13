@@ -1,0 +1,56 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}détail de la prime{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_personnel.html.twig" %}        
+        <div class="col-sm-12 col-md-10">
+            <table class="table table-striped table-hover align-middle m-auto">
+                <tbody>
+                    <tr>
+                        <th>Prénom & Nom</th>
+                        <td class="text-start">{{ primes_personnel.personnel.prenom | ucwords ~ " " ~ primes_personnel.personnel.nom | strtoupper  }}</td>
+                    </tr>
+                    <tr>
+                        <th>Montant de la prime</th>
+                        <td>{{primes_personnel.montant | number_format(0,',',' ')}}</td>
+
+                    </tr>
+                    <tr>
+                        <th>Période</th>
+                        <td>{{ primes_personnel.periode ? primes_personnel.periode|date('m-Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de Saisie</th>
+                        <td>{{ primes_personnel.dateSaisie ? primes_personnel.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Traité par</th>
+                        <td class="text-start">{{ primes_personnel.saisiePar.prenom | ucwords ~ " " ~ primes_personnel.saisiePar.nom | strtoupper  }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between my-4">
+
+                <a class="btn btn-light" href="{{ path('app_logescom_personnel_primes_personnel_index', {lieu_vente : lieu_vente.id }) }}">Retour</a>
+
+                <a class="btn btn-danger" onClick="alerteConfirmation()" href="{{ path('app_logescom_personnel_primes_personnel_delete' , {'id': primes_personnel.id, lieu_vente : lieu_vente.id }) }}">Annuler</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

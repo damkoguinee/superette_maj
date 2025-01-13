@@ -1,0 +1,121 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}détail décaissement{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_decaissement.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Référence</th>
+                        <td>{{ decaissement.reference }}</td>
+                    </tr>
+                    <tr>
+                        <th>Collaborateur</th>
+                        <td>{{ decaissement.client.prenom|ucwords ~ " " ~ decaissement.client.nom |strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Motif</th>
+                        <td>{{ decaissement.commentaire|ucfirst }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Montant</th>
+                        <td>{{ decaissement.devise.nomDevise == 'gnf' ? decaissement.montant|number_format(0,',',' ') : decaissement.montant|number_format(2,',',' ') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Devise</th>
+                        <td>{{ decaissement.devise.nomDevise|strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mode de Paiement</th>
+                        <td>{{ decaissement.modePaie.designation|ucfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numéro paiement</th>
+                        <td>{{ decaissement.numeroChequeBord }}</td>
+                    </tr>
+                    <tr>
+                        <th>Banque Chèque</th>
+                        <td>{{ decaissement.banqueCheque }}</td>
+                    </tr>
+                    <tr>
+                        <th>Caisse de retrait</th>
+                        <td>{{ decaissement.compteDecaisser.designation|ucfirst }}</td>
+
+                    </tr>
+                    <tr>
+                        <th>Date décaissement</th>
+                        <td>{{ decaissement.dateDecaissement ? decaissement.dateDecaissement|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de Saisie</th>
+                        <td>{{ decaissement.dateSaisie ? decaissement.dateSaisie|date('d/m/Y H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Traité par</th>
+                        <td>{{ decaissement.traitePar.prenom|ucwords ~ " " ~ decaissement.traitePar.nom |strtoupper }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="text-center bg-warning">Historique des modifications</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <table class="table table-bordered table-striped table-hover align-middle">
+
+                                <thead class="sticky-top bg-light text-center">
+                                    <tr>
+                                        <th>Date init</th>
+                                        <th>Client init</th>
+                                        <th>Montant init</th>
+                                        <th>Devise init</th>
+                                        <th>Traite par</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dec_modif in decaissements_modif %}
+                                        <tr>
+                                            <td class="text-center">{{ dec_modif.dateSaisie ? dec_modif.dateSaisie|date('d/m/Y') : '' }}</td>
+                                            <td>{{ dec_modif.collaborateur.prenom|ucwords ~ " " ~ dec_modif.collaborateur.nom |strtoupper }}</td>
+                                            <td class="text-end">{{ dec_modif.devise.nomDevise == 'gnf' ? dec_modif.montant|number_format(0,',',' ') : dec_modif.montant|number_format(2,',',' ') }}</td>
+                                            <td class="text-center">{{ dec_modif.devise.nomDevise|strtoupper }}</td>
+                                            <td>{{ dec_modif.traitePar.prenom|ucwords ~ " " ~ dec_modif.traitePar.nom |strtoupper }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+
+                <a class="btn btn-light" href="{{ path('app_logescom_sorties_decaissement_index', { lieu_vente : lieu_vente.id}) }}">Retour</a>
+                {% if is_granted("ROLE_MODIFICATION") %}
+                    <a class="btn btn-warning" href="{{ path('app_logescom_sorties_decaissement_edit', {'id': decaissement.id, lieu_vente : lieu_vente.id}) }}"><i class="fa fa-edit"></i></a>
+                {% endif %}
+                {% if is_granted("ROLE_SUPPRESSION") %}
+                    {{ include('logescom/sorties/decaissement/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

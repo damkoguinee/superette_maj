@@ -1,0 +1,236 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}lieux-ventes{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+
+    {% if app.request.query.has('region') %}
+        {% set region = region_find.nom %}
+    {% else %}
+        {% set region = "recherchez par région" %}
+    {% endif %}
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 50vh; background-color:#193c51;">
+        <div class="row m-4 p-4 mb-0 pb-0 justify-content-center align-item-center" style="margin: auto; width:96%; background-image: url({{ asset('images/config/fond.jpg') }});">
+
+            {{ include("_common/_messages_flash.html.twig") }}
+            {% if licenceExpiree %}
+                <div class="text-center alert alert-danger fs-5" id="scrollingTextttttt">
+                    Cher Client, Votre licence a expiré le {{ licence.dateFin|date('d/m/Y') }}. 
+                    Veuillez contacter votre gestionnaire DAMKO pour procéder au renouvellement afin de continuer à utiliser le logiciel.
+                    Nous vous remercions de votre confiance.
+                    
+                    <!-- Bouton pour contacter le gestionnaire -->
+                    <a href="mailto:responsable-commercial@damkocompany.com" class="btn btn-danger mt-2">Contacter le gestionnaire</a>
+                    
+                    <!-- Bouton pour procéder au paiement -->
+                    <a href="{{path('app_licence')}}" class="btn btn-primary mt-2">Renouveler la licence</a>
+                </div>
+            {% elseif alerteExpiration %}
+                <div class="text-center alert alert-warning fs-5" id="scrollingTextttttt">
+                    Cher Client, Votre licence arrivera à expiration le {{ licence.dateFin|date('d/m/Y') }}. 
+                    Nous vous invitons à prendre contact avec votre gestionnaire DAMKO pour procéder à la régularisation.
+                    Nous vous remercions de votre confiance.
+                    
+                    <!-- Bouton pour contacter le gestionnaire -->
+                    <a href="mailto:responsable-commercial@damkocompany.com" class="btn btn-warning mt-2">Contacter le gestionnaire</a>
+                    
+                    <!-- Bouton pour procéder au paiement -->
+                    <a href="{{path('app_licence')}}" class="btn btn-primary mt-2">Renouveler la licence</a>
+                </div>
+            {% endif %}
+
+            {% if config is not empty and config.cheminSauvegarde is not empty %}
+
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-light" href="{{path("app_sauvegarde_bdd")}}">
+                        <div class="card" style="width: 8rem; height:10rem;">
+                            <img src="{{ asset('images/config/sauvegarde.jpg') }}" class="card-img-top m-auto" alt="" style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center">Sauvegarde</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+
+
+            <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                <a  class="btn btn-light" href="{{path("app_admin_entreprise_index")}}">
+                    <div class="card" style="width: 12rem; height:10rem;">
+                        <img src="{{ asset('images/config/admin.jpg') }}" class="card-img-top m-auto" alt="ventes" style="width: 5rem; height: 5rem">
+                        <div class="card-bod m-auto ">
+                            <h6 class="card-title text-center">Administration</h6>
+                            <h6 class="card-title text-center">{{entreprise.adresse|ucfirst}}</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                <a  class="btn btn-light" href="{{path("app_logescom_direction_direction_solde")}}">
+                    <div class="card" style="width: 12rem; height:10rem; ">
+                        {# <img src="{{ asset('images/config/client.jpg') }}" class="card-img-top m-auto" alt="ventes" style="width: 5rem; height: 5rem"> #}
+                        {% if entreprise.logo is not empty %}
+                            <img src="{{asset(chemin_images_logos) ~ entreprise.logo}}"   class="card-img-top m-auto" alt="ventes" style="width: 5rem; height: 5rem">
+                        {% else %}
+                            <img src="{{ asset('images/config/default.jpg') }}"   class="card-img-top m-auto" alt="ventes" style="width: 5rem; height: 5rem">
+                        {% endif %}
+                        <div class="card-bod m-auto ">
+                            <h6 class="card-title text-center">Direction</h6>
+                            <h6 class="card-title text-center">{{entreprise.adresse|ucfirst}}</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            {% for lieu_vente in lieux_ventes %}      
+                <div class="col-sm-6 col-md-3 col-lg-3 m-auto my-4">
+                    <a  class="btn btn-light" href="{{path("app_logescom_home-lieuvente", {id : lieu_vente.id} )}}">
+                        <div class="card" style="width: 12rem; height:10rem;">
+                            <img src="{{ asset('images/config/achat.jpg') }}" class="card-img-top m-auto" alt="ventes"style="width: 5rem; height: 5rem">
+                            <div class="card-bod m-auto ">
+                                <h6 class="card-title text-center">Lieu de vente</h6>
+                                <h6 class="card-title text-center">{{lieu_vente.lieu|ucfirst}}</h6>
+                                <h6 class="card-title text-center">{{lieu_vente.gestionnaire.prenom}}</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+
+            
+        </div>
+
+    </div>
+    {% if is_granted('ROLE_RESPONSABLE') %}
+    
+        <div class="row">
+            <div class="col-sm-12 col-md-10 m-auto">
+                <table class="table table-bordered table-striped table-hover align-middle">
+            
+                    <thead class="sticky-top bg-light text-center">
+                        <tr>
+                            <th colspan="7" class="text-center bg-danger text-white">
+                                Comptes des clients inactifs depuis {{limit}} jours 
+                                <a class="btn btn-light text-center" target="_blank" href="{{path("app_logescom_pdf_pdf_compte_inactif_general", {entreprise : 1, limit: limit})}}"><i class="fa fa-file-pdf fs-6 text-danger"></i></a>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="7" class="text-center bg-danger text-white">
+                                <div class="row align-items-center ">
+                                    <div class="col-4">
+                                        <form class="form">
+                                            <select onChange="this.form.submit()" name="limit" id="" class="form-select">
+                                                <option value="">Selectionnez la durée </option>
+                                                {% for i in 1..90 %}
+                                                    <option value="{{ i }}">{{ i }} Jour(s)</option>
+                                                {% endfor %}
+                                            </select>
+                                        </form>
+                                    </div>
+                                    {# <div class="col-4">
+                                        {% if type1 == 'personnel' %}
+                                            <input type="text" name="search" class="form-control" id="search_personnel" placeholder="Récherchez un personnel">
+            
+                                        {% else %}
+                                            <input type="text" name="search" class="form-control" id="search_client" placeholder="Récherchez un client">
+                                        {% endif %}
+                                    </div>   #}
+                                    <div class="col-3">
+                                        <form class="form w-100">
+                                            <div class="row">
+                                                <input type="hidden" name="type1" value="{{type1}}">
+                                                <input type="hidden" name="type2" value="{{type2}}">
+                                                <select name="region" id="" class="form-select" onChange="this.form.submit()">
+                                                    <option value="{{ region }}">{{ region }}</option>
+                                                    {% for region in regions %}
+                                                        <option value="{{region.id}}">{{region.nom|ucfirst}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% if type1 == 'personnel' %}
+                                    <div class="bg-light text-white text-start" id="result_search_personnel"></div>
+                                {% else %}
+                                    <div class="bg-light text-white text-start" id="result-search"></div>
+                                {% endif %}
+                            </th>
+                        <tr>
+                        <tr>
+                            <th class="bg-danger text-white">N°</th>
+                            <th class="bg-danger text-white">Nom</th>
+                            <th class="bg-danger text-white">Contact</th>
+                            <th class="bg-danger text-white">Dernière Op</th>
+                            {% for devise in devises %}
+                                <th class="bg-danger text-white">Solde {{devise.nomDevise|strtoupper}}</th>
+                            {% endfor %}
+                            <th class="bg-danger text-white">actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set cumulCreances = 0 %}
+            
+                        {% for key, compte in comptes %}
+                            <tr>
+                                <td class="text-center">{{ (key +1) }}</td>
+                                <td class="fs-5">{{ compte.collaborateur.prenom|strtolower|ucwords ~ " " ~ compte.collaborateur.nom |strtolower|strtoupper }}</td>
+                                <td class='text-center'>{{ compte.collaborateur.telephone }}</td>
+                                <td class='text-center'>{{ compte.derniereOp.dateOperation|date("d/m/Y") }}</td>
+                                {% for solde in compte.soldes %}
+                                    {% set cumulCreances = cumulCreances + solde.montant %}
+                                    {% if solde.montant <= 0 %}
+                                        {% set color = 'success' %}
+                                        {% set montant = - solde.montant %}
+                                    {% else %}
+                                        {% set color = 'danger' %}
+                                        {% set montant = solde.montant %}
+                                    {% endif %}
+                                    <td class="text-end">
+                                        <a href="{{path("app_logescom_compte_compte_collaborateur_detail", {user : compte.collaborateur.id, devise: solde.devise, lieu_vente: compte.collaborateur.lieuVente.id })}}" class="btn btn-{{color}} text-end w-100">
+                                            {{ solde.devise == 'gnf' ? montant|number_format(0,',',' ') : montant|number_format(2,',',' ') }}
+                                        </a>
+                                    </td>
+                                {% endfor %}
+                                <td class="text-center">
+                                    <a class="btn btn-success" href="{{path("app_logescom_direction_statistiques_ventes_client", { id_client_search : compte.collaborateur.id })}}"><i class="fa fa-eye"></i></a>
+            
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7">Aucun client disponible</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-info  bg-opacity-75">
+                            <th colspan="4" class="bg-info text-white bg-opacity-75 fw-bold text-center ">Cumul Général</th>
+                                                        
+                            <th class="bg-success text-white bg-opacity-75 text-end  fw-bold px-3">{{ (- cumulCreances)|number_format(0,',',' ') }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+

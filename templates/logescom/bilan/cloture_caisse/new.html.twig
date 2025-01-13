@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ClotureCaisse{% endblock %}
+
+{% block body %}
+    <h1>Create new ClotureCaisse</h1>
+
+    {{ include('nhema/caisse/cloture_caisse/_form.html.twig') }}
+
+    <a href="{{ path('app_nhema_caisse_cloture_caisse_index') }}">back to list</a>
+{% endblock %}

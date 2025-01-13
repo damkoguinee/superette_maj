@@ -1,0 +1,13 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Edit Collaborateurs{% endblock %}
+
+{% block body %}
+    <h1>Edit Collaborateurs</h1>
+
+    {{ include('admin/collaborateurs/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_admin_collaborateurs_index') }}">back to list</a>
+
+    {{ include('admin/collaborateurs/_delete_form.html.twig') }}
+{% endblock %}

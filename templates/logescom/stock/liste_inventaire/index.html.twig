@@ -1,0 +1,88 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}liste des inventaires{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <h3 class="text-center mt-2">Liste des inventaires</h3>
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-light text-center">
+                    {% if liste_stock is not empty %}
+                        {{form_errors(form)}}
+                        {{ form_start(form)}}
+                            <tr>
+                                <th colspan="6" class="bg-info ">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-12 col-md-4">Crée un inventaire</div>
+                                        <div class="col-sm-12 col-md-4">
+                                            {{form_widget(form.description)}}
+                                        </div>
+                                        <div class="col-sm-12 col-md-2">
+                                            <button type="submit" class="btn btn-success my-2">Ajouter</button>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            
+                        {{form_end(form)}}
+                    {% endif %}
+                    <tr>
+                        <th>N°</th>
+                        <th>Crée le</th>
+                        <th>Description</th>
+                        <th>Lieu-vente</th>
+                        <th>Crée par</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, liste_inventaire in liste_inventaires %}
+                    <tr>
+                        <td class="text-center">{{ (key + 1) }}</td>
+                        <td class="text-center">{{ liste_inventaire.dateCreation ? liste_inventaire.dateCreation|date('d/m/Y') : '' }}</td>
+                        <td>{{ liste_inventaire.description }}</td>
+                        <td>{{ liste_inventaire.lieuVente.adresse }}</td>
+                        <td>{{ liste_inventaire.personnel.prenom | ucwords }}</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center">
+                                <a class="btn btn-success mx-2" href="{{ path('app_logescom_stock_liste_inventaire_show', {'id': liste_inventaire.id}) }}"><i class="fa fa-eye"></i></a>
+                                
+                                <a class="btn btn-warning mx-2" href="{{ path('app_logescom_stock_inventaire_index', {'id': liste_inventaire.id}) }}"><i class="fa fa-edit"></i></a>
+
+                                {# <form method="post" action="{{ path('app_logescom_stock_liste_inventaire_delete', {'id': liste_inventaire.id}) }}" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ liste_inventaire.id) }}">
+                                    <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                </form> #}
+
+                                {# <form class="form mx-2" method="post" action="{{ path('app_logescom_stock_liste_inventaire_delete', {'id': liste_inventaire.id}) }}" onsubmit="return confirm('Etes-vous sûr de vouloir supprimer cet inventaire? les stsocks reviendons à l'état initial ');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ liste_inventaire.id) }}">
+                                    <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                </form> #}
+                            </div>
+
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucun inventaire trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

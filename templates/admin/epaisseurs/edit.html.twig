@@ -1,0 +1,25 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}edit epaisseur{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <h3 class="text-center">Modifier {{epaisseur.valeurepaisseur}}</h3>    
+
+    {{ include('admin/epaisseurs/_form.html.twig', {'button_label': 'Modifier'}) }}
+    <div class="my-4 pb-4 d-flex justify-content-between">
+        <a class="btn btn-secondary" href="{{ path('app_admin_epaisseurs_index') }}">Retour</a>
+
+        {{ include('_common/_delete_form.html.twig') }}
+
+    </div>
+{% endblock %}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}prepa commande2{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        {% block stylesheets %}
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+			{# <link rel="stylesheet" href="{{ asset('css/style.css') }}"> #}
+		{% endblock %}
+
+        {% block javascripts %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		    <script src="https://kit.fontawesome.com/8df11ad090.js" crossorigin="anonymous"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <style>
+            body{
+            margin: 0px;
+            width: 100%;
+            height:68%;
+            padding:0px;}
+            .ticket{
+                margin:0px;
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                color: #717375;
+                font-family: helvetica;
+                border-collapse: collapse;
+            }
+            
+            .border th {
+                border: 1px solid black;
+                padding: 0px;
+                font-size: 16px;
+                color: black;
+                background: white;
+                text-align: right;
+            }
+            .border td {
+                border: 1px solid black;
+                padding: 0px;    
+                font-size: 14px;
+                color: black;
+                background: white;
+                text-align: center;
+            }
+            .footer{
+                font-size: 18px;
+                font-style: italic;
+            }
+        </style>
+        
+        
+        <table class="border">
+            <thead>
+                <tr>
+                    <td style="width:15%; text-align:center;  padding-top: 5px; border: 0px;">
+                        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo"width="180" height="100">
+                    </td>
+
+                    <td style="width:45%; text-align:left; border: 0px;">
+                        <label style="color: #33C4FF; text-align:center; font-weight: bold; font-size: 18px; " for="">{{lieu_vente.entreprise.nomEntreprise}}</label><br/>
+                        <label style="color:#33C4FF;">{{lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement}}</label><br/>
+                        <span>Ad: {{lieu_vente.adresse|ucfirst}}</span><br/>
+                        <span>Tél: {{lieu_vente.telephone}}</span><br/>
+                        <span>Email: {{lieu_vente.email}}</span><br/>
+                        <span><span style="color:red;">gestionnaire: </span>{{lieu_vente.gestionnaire.prenom|ucwords}}</span>
+                        
+                    </td>
+                    <td colspan="2" style="text-align:center; border: 0px;">
+                        <table style='border: 2px solid #33C4FF; width:100%;'>
+                            <thead>
+                                <tr>
+                                    <th style="background-color:#33C4FF; color:white; text-align:center; border: 2px solid #33C4FF;">Informations Bon de livraison</th>
+                                </tr>
+                            </thead>
+                            <tbody style="text-align:left;">
+                                {% if facturation.proformat is not empty %}
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >N° Proformat: {{facturation.proformat.numeroProformat|strtoupper}}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <td style="text-align:left; border:0px;" >N° de la facture: {{facturation.numeroFacture|strtoupper}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left; border:0px;" >Date d'émission: {{facturation.dateFacturation|date("d/m/Y à H:i")}}</td>
+                                </tr>
+                                {% if facturation.dateAlerte %}
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >À payer avant le: {{facturation.dateAlerte|date("d/m/Y")}}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <td style="text-align:left; border:0px;" >Etat Livraison: {{facturation.etatLivraison|ucfirst}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:left; border:0px;" >Saisie par: {{facturation.saisiePar.prenom|ucwords}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="4" height="20" style="border:0px solid white;"></th>
+                </tr>
+
+                {% for key, cmd in commandes %}
+                    <tr>
+                        <td colspan="1" style=" text-align:center; font-size: 16px; padding-top: 5px; border: 0px;">
+                            <table style='border: 2px solid #33C4FF;'>
+                                <thead>
+                                    <tr>
+                                        <th style="background-color:#33C4FF; color:white; text-align:center; border: 2px solid #33C4FF;">Bon de livraison N°: {{cmd.id}}  </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </td>
+
+                        <td colspan="3" style="text-align:center; font-size: 18px; padding-top: 5px; border: 0px;">
+                            <table style='border: 2px solid #33C4FF; margin-left:100px; width:80%'>
+                                <thead>
+                                    <tr>
+                                        <th style="background-color:#33C4FF; color:white; text-align:center; border: 2px solid #33C4FF;">Adresse de facturation</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align:left;">
+                                    {% if client.societe is not empty %}
+                                        <tr>
+                                            <td style="text-align:left; border:0px;" >Société: {{client.societe|ucwords}}</td>
+                                        </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >Représentant: {{facturation.client.prenom|ucwords ~ " " ~ facturation.client.nom|strtoupper}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >Télephone: {{facturation.client.telephone}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >Télephone: {{facturation.client.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:left; border:0px;" >Adresse: {{facturation.client.adresse|ucwords}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="4" height="30" style="border:0px solid white;"></th>
+                    </tr>
+                <tr>
+                    <td colspan="4" style="border:0px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td height="20" style="text-align:center; border: 1px solid #33C4FF; font-size:12px;">Qtite Cmd</td>
+
+                                    <td style="text-align:center; border: 1px solid #33C4FF; font-size:12px;">Reste à liv</td>
+
+                                    <td style=" text-align:center; border: 1px solid #33C4FF; font-size:12px;">Désignation</td>
+
+                                    <td width="80" style="text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td style="border:0.6px solid #33C4FF;" height="20">{{cmd.quantite|number_format(0,',',' ')}}</td>
+
+                                    <td style="border:0.6px solid #33C4FF;" height="20">{{(cmd.quantite - cmd.quantiteLivre)|number_format(0,',',' ')}}</td>
+                                    <td style="border:0.6px solid #33C4FF; text-align:left;">{{cmd.product.designation|ucfirst}}</td>
+
+                                    <td width="80" style="color:white; text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="color:white; text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="color:white; text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                    <td width="80" style="color:white; text-align:center; border: 1px solid #33C4FF; font-size:12px;"></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border:0px;">
+                        <table>
+                            <thead>
+
+                                <tr>
+                                    <th colspan="3" height="10" style="border:0px solid white;"></th>
+                                </tr>
+
+                                <tr>
+                                    <th style="border:0px; text-align:left;" colspan="2">Emetteur</th>
+                                    <th style="border:0px; text-align:center;" colspan="1">Réception</th>
+                                    <th style="border:0px; text-align:center;" colspan="1">Client</th>
+                                </tr>
+
+                                <tr>
+                                    <th colspan="3" height="50" style="border:0px solid white;"></th>
+                                </tr>
+
+                                
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                <th colspan="4" style="border:0px;">**********************************************************************************************************</th>
+            </tr>
+            {% endfor %}
+                
+            </thead>                
+            <tbody>
+                
+                
+            </tbody>
+            <footer style="position: fixed;bottom: 0; width: 100%;text-align: right; font-family:italic; font-size: 10px;">
+                <p>Bon imprimé par  : {{app.user.prenom | ucwords ~ " " ~ app.user.nom | strtoupper ~ " le " ~ "now"|date("d/m/Y à H:i")}}</p>
+            </footer>
+        </table>
+        
+    </body>
+</html>

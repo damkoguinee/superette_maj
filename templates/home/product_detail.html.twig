@@ -1,0 +1,205 @@
+{% extends "base.html.twig" %}
+
+{# on crée des variables personnalisés #}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajax") | url_encode %}
+
+{% block title %}
+    details des produits
+{% endblock %}
+{% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+            <img src="{{asset(chemin_images_bannieres) ~ banniere_boutique.image}}" class="d-block w-100 " alt="tubes" style="height: 200px;">
+            </div>
+        </div>        
+    </div>
+ {% endblock %}
+{% block categories %}
+    {% set path = 'app_home_detail_produit'  %}
+    {% set nbrePages = categories.nbrePages %}
+    {% set pageEncours = categories.pageEncours %}
+    {% set id = categorie.id %}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination align-items-center justify-content-center ">
+            {% if pageEncours > 1 %}
+                <li class="page-item ">
+                    <a class="page-link" href="{{path(path, {id : id, pageEncours : pageEncours - 1} ) }}#products">&lt;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+            {% endif %}
+
+            <div class="d-flex justify-content-center align-items-center">
+                {% for categorie in categories.data %}
+                    <a href="{{path('app_home_detail_produit', {'id': categorie.id})}}#products" class="btn btn-secondary mx-1 my-4 p-3">{{categorie.nameCategorie | ucwords}}</a>
+                {% endfor %}
+            </div>
+
+            {% if pageEncours < nbrePages %}
+                <li class="page-item "><a class="page-link" href="{{path(path, {id : id, pageEncours : pageEncours + 1} ) }}#products">&gt;</a></li>
+            {% else %}
+                <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+            {% endif %}
+            </li>
+        </ul>
+    </nav>
+    <h1 class="trait-h1"></h1>
+{% endblock %}
+{% block produits %}
+    <section class="section my-4">
+        <div class="row p-4">
+            {% set path = 'app_home_detail_produit'  %}
+            {% set nbrePages = products.nbrePages %}
+            {% set pageProductsEncours = products.pageProductsEncours %}
+            {% set id = categorie.id %}
+            <div class="col-2 border " style="background-color:#71b1e6;">
+                <span class="fw-bold fs-5">FILTRER PAR</span>
+                <form action="" id="filters">
+                    <h5 class="trait-h1 w-25"></h5>
+                    <div class="choix-dimensions">
+                        {% if dimensions is not empty %}
+                        
+                            <span class="fw-bold fs-5">Dimensions</span>
+
+                            {% for dimension in dimensions %}
+                                {# on vérifie que si la dimension est dans les parametres #}
+                                {% if queryParams is not empty and queryParams.dimensions is defined %}
+                                    {% set checked_dimension = (dimension.id in queryParams.dimensions) ? "checked" : "" %}
+                                {% else %}
+                                    {% set checked_dimension = "" %}
+                                {% endif %}
+                                
+                                <div class="form-check mx-2">
+                                    <input class="form-check-input fs-5" type="checkbox" name="dimensions[]" id="dimension{{dimension.id}}" value="{{dimension.id}}" {{checked_dimension}} >
+                                    <label class="form-check-label fs-6 fw-bold" for="dimension{{dimension.id}}">
+                                        {{ dimension.valeurDimension ~ " "~ dimension.unite}}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="choix-epaisseurs">
+                        {% if epaisseurs is not empty %}
+                                
+                            <span class="fw-bold fs-5">Epaisseurs</span>
+
+                            {% for epaisseur in epaisseurs %}
+                                {% if queryParams is not empty and queryParams.epaisseurs is defined %}
+                                    {% set checked_epaisseur = (epaisseur.id in queryParams.epaisseurs) ? "checked" : "" %}
+                                {% else %}
+                                    {% set checked_epaisseur = "" %}
+                                {% endif %}
+                                
+                                <div class="form-check mx-2">
+                                    <input class="form-check-input fs-5" type="checkbox" name="epaisseurs[]" id="epaisseur{{epaisseur.id}}" value="{{epaisseur.id}}" {{checked_epaisseur}} >
+                                    <label class="form-check-label fs-6 fw-bold" for="epaisseur{{epaisseur.id}}">
+                                        {{ epaisseur.valeurEpaisseur ~ " "~ epaisseur.unite}}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="choix-origines">
+                        {% if origines is not empty %}
+                                
+                            <span class="fw-bold fs-5">Origines</span>
+                            {% for origine in origines %}
+                                {% if queryParams is not empty and queryParams.origines is defined %}
+                                    {% set checked_origine = (origine.id in queryParams.origines) ? "checked" : "" %}
+                                {% else %}
+                                    {% set checked_origine = "" %}
+                                {% endif %}
+                                
+                                <div class="form-check mx-2">
+                                    <input class="form-check-input fs-5" type="checkbox" name="origines[]" id="origine{{origine.id}}" value="{{origine.id}}" {{checked_origine}} >
+                                    <label class="form-check-label fs-6 fw-bold" for="origine{{origine.id}}">
+                                        {{ origine.pays}}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="choix-types">
+                        {% if types is not empty %}
+                                
+                            <span class="fw-bold fs-5">types</span>
+
+                            {% for type in types %}
+                                {% if queryParams is not empty and queryParams.types is defined %}
+                                    {% set checked_type = (type.id in queryParams.types) ? "checked" : "" %}
+                                {% else %}
+                                    {% set checked_type = "" %}
+                                {% endif %}
+                                
+                                <div class="form-check mx-2">
+                                    <input class="form-check-input fs-4" type="checkbox" name="types[]" id="type{{type.id}}" value="{{type.id}}" {{checked_type}} >
+                                    <label class="form-check-label fs-6 fw-bold" for="type{{type.id}}">
+                                        {{ type.designation}}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <input type="hidden" name="pageProductsEncours" value="{{pageProductsEncours}}">
+                    <input type="hidden" name="id" value="{{id}}">
+                </form>
+            </div>
+            <div class="col-10 border">
+                {% include "_common/_pagination.html.twig" %}
+
+                <div id="content">
+                    {% include "home/_product.html.twig" %}
+                </div>
+
+                <div class="description-produits">
+                    {{ categorie.description | raw}}
+
+                </div>
+            </div>
+        </div>        
+    </section>
+
+    <script>
+        window.onload = () => {
+            const FiltersForm = document.querySelector("#filters");
+            // on boucle sur les input
+            document.querySelectorAll("#filters input").forEach(input => {
+                input.addEventListener("change", () => {
+                    // on intercepte les clics
+                    const Form = new FormData(FiltersForm);
+                    // on fabrique l'url
+                    const Params = new URLSearchParams();
+                    Form.forEach((value, key) => {
+                        Params.append(key, value);
+                    });
+                    // on recupere l'url active
+                    const url = new URL(window.location.href);
+                    // on lance la requete ajax
+                    fetch(url.pathname + "?" + Params.toString() + "&ajax=1", {
+                        headers : {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    }).then(response => 
+                        response.json()
+                    ).then(data => {
+                        const content = document.querySelector("#content");
+                        content.innerHTML = data.content;
+
+                        // on met à jour l'url
+                        history.pushState({}, null, url.pathname + "?" + Params.toString())
+                    }).catch(e => alert(e));
+
+                })
+
+            })
+        }
+    </script>
+
+{% endblock %}

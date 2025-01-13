@@ -1,0 +1,108 @@
+{% extends 'base_logescom.html.twig' %}
+
+{% block title %}liste des inventaires{% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_stock.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ liste_inventaire.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de Création</th>
+                        <td>{{ liste_inventaire.dateCreation ? liste_inventaire.dateCreation|date('Y-m-d') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ liste_inventaire.description }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Crée par </th>
+                        <td>{{ liste_inventaire.personnel.prenom | ucwords }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            
+            <div class="pb-4 d-flex justify-content-between">
+                <a class="btn btn-light" href="{{path("app_logescom_stock_liste_inventaire_new", {lieu_vente : liste_inventaire.lieuVente.id})}}">Retour</a>
+
+                {% if is_granted("ROLE_MODIFICATION") %}
+                    <a oncLick="alerteConfirmation()" class="btn btn-warning mx-2" href="{{ path('app_logescom_stock_liste_inventaire_cloture', {'id': liste_inventaire.id}) }}">Clôturer</a>
+                {% endif %}
+
+                {% if is_granted("ROLE_SUPPRESSION") %}
+                    {{ include('logescom/stock/liste_inventaire/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th colspan="8">Liste des produits inventoriés</th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Qtite stock</th>
+                        <th>Inventaire</th>
+                        <th>Ecart</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, inventaire in inventaires %}
+
+                    {% if inventaire.statut == 'clos' %}
+                        {% set color = 'success' %}
+                    {% elseif inventaire.ecart < 0 %}
+                        {% set color = 'danger' %}                        
+                    {% else %}
+                        {% set color = '' %}                        
+                    {% endif %}
+                        <tr>
+                            <td class="text-center text-{{color}}">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class=" text-{{color}}">{{ inventaire.product.categorie.nameCategorie }}</td>
+                            <td class=" text-{{color}}">{{ inventaire.product.reference }}</td>
+                            <td class=" text-{{color}}">{{ inventaire.product.designation }}</td>
+                            <td class="text-center text-{{color}}">{{ inventaire.quantiteInit ? inventaire.quantiteInit : 0  }}</td> 
+                    
+                            <td class="text-center text-{{color}}">{{inventaire.quantiteInv}}</td>                            
+                                
+                            <td class="text-center text-{{color}}">{{inventaire.ecart }}</td>
+                            <td class="text-left text-{{color}}">{{inventaire.stock.nomStock|ucfirst }}</td>
+                        </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Aucun produit inventorié</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                
+                
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

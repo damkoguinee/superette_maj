@@ -1,0 +1,39 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    dossier_images: "%kernel.project_dir%/public/images"
+    dossier_img_products: "%kernel.project_dir%/public/images/img-product"
+    dossier_img_logos: "%kernel.project_dir%/public/images/img-logos"
+    dossier_banieres: "%kernel.project_dir%/public/images/bannieres"
+    dossier_categories: "%kernel.project_dir%/public/images/categories"
+    dossier_logo_paie: "%kernel.project_dir%/public/images/logo-paie"
+    dossier_photo_personnel: "%kernel.project_dir%/public/personnel/photo"
+    dossier_identite_personnel: "%kernel.project_dir%/public/personnel/identite"
+    dossier_achat: "%kernel.project_dir%/public/achatFournisseur/facture"
+    dossier_depenses: "%kernel.project_dir%/public/depenses"
+    dossier_decaissement: "%kernel.project_dir%/public/decaissement"
+    dossier_caisse: "%kernel.project_dir%/public/caisse"
+    dossier_client: "%kernel.project_dir%/public/client"
+    dossier_devise: "%kernel.project_dir%/public/devise"
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    

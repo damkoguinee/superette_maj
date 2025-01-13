@@ -1,0 +1,98 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Categorie{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <h3 class="text-center">Commande {{orders.reference}}</h3>
+
+    <table class="table table-bordered table-striped table-hover align-middle">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ orders.id }}</td>
+            </tr>
+            <tr>
+                <th>Référence</th>
+                <td>{{ orders.reference }} <a class="btn btn-info" href="{{ path('app_admin_ventes_edit', {'id': orders.id}) }}"><i class="fa fa-edit"></i></a></td>
+            </tr>
+            <tr>
+                <th>Client</th>
+                <td>{{ orders.user.prenom ~ " " ~ orders.user.nom }}</td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td>{{ orders.totalFacture | number_format(0, ',', ' ') }}</td>
+            </tr>
+            
+            <tr>
+                <td colspan="2">
+                    <table class="table table-bordered table-striped table-hover align-middle">
+                        <thead class="sticky-top bg-light text-center">
+                            <tr>
+                                <th colspan="7" class="bg-info">Liste des produits vendus {{ orders.reference }} </th>
+                            </tr>
+                            <tr>
+                                <th>N°</th>
+                                <th>Vendeur</th>
+                                <th>Référence</th>
+                                <th>Désignation</th>
+                                <th>Prix Unit</th>
+                                <th>Qtité</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, order in orders.ordersDetails %}        
+                                <tr>
+                                    <td class="text-center">
+                                        {{ (key)+1 }}
+                                        {% if order.stock.products.categorie.couverture %}   
+                                            <img src="{{asset(chemin_images_product) ~ order.stock.products.categorie.couverture}}" alt="image {{ orders.reference }}" class="miniature">
+
+                                        {% else %}
+                                            <img alt="image {{ orders.reference }}" class="miniature">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.stock.shop.nomBoutique }}</td>
+                                    <td>{{ order.stock.products.reference }}</td>
+                                    <td>{{ order.stock.products.designation }}</td>
+                                    <td class="text-end">{{ order.price | number_format(0,',',' ') }}</td>
+                                    <td class="text-center">{{ order.quantity }}</td>
+
+                                    <td class="text-end">{{ (order.quantity * order.price) | number_format(0,',',' ') }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="7">Aucun produit trouvé</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="pb-4 d-flex justify-content-between">
+        <a class="btn btn-secondary" href="{{ path('app_admin_ventes') }}">Retour</a>
+
+        <a class="btn btn-info" href="{{ path('app_admin_ventes_edit', {'id': orders.id}) }}"><i class="fa fa-edit"></i></a>
+
+        {# {{ include('_common/_delete_form.html.twig') }} #}
+    </div>
+{% endblock %}
+
+{% block contact %}{% endblock %}
+{% block collaborateurs %}{% endblock %}
+
+{% block footer %}{% endblock %}

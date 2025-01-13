@@ -1,0 +1,27 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Edit utilisateur{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <h3 class="text-center">Modifier {{user.username}}</h3>    
+
+
+    {{ include('admin/user/_form.html.twig', {'button_label': ''}) }}
+    <div class="my-4 pb-4 d-flex justify-content-between">
+
+        <a class="btn btn-secondary" href="{{ path('app_admin_user_index') }}">Retour</a>
+
+        {{ include('_common/_delete_form.html.twig') }}
+    </div>
+    {% block footer %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,10 @@
+<div class="col-sm-12 col-md-2 pb-3" style="background-color:#152736;">     
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_bilan_index", {lieu_vente : lieu_vente.id})}}">Bilan Périodique des caisses</a>
+    {% if is_granted('ROLE_GESTIONNAIRE') %}
+        <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_bilan_etat_caisse", {lieu_vente : lieu_vente.id})}}">Etat des caisses</a>
+    {% endif %}
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_bilan_cloture", {lieu_vente : lieu_vente.id})}}">Clôture des caisses</a>
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_bilan_detail_operation", {lieu_vente : lieu_vente.id})}}">Détail des opérations</a>
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_index", {lieu_vente : lieu_vente.id})}}">Facturations</a>
+
+</div>

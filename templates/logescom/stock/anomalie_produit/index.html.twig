@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AnomalieProduit index{% endblock %}
+
+{% block body %}
+    <h1>AnomalieProduit index</h1>
+
+    <table class="table table-bordered table-striped table-hover align-middle" >
+        <thead class="sticky-top bg-info text-center text-white">
+            <tr>
+                <th>Id</th>
+                <th>Quantite</th>
+                <th>PrixRevient</th>
+                <th>DateAnomalie</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for anomalie_produit in anomalie_produits %}
+            <tr>
+                <td>{{ anomalie_produit.id }}</td>
+                <td>{{ anomalie_produit.quantite }}</td>
+                <td>{{ anomalie_produit.prixRevient }}</td>
+                <td>{{ anomalie_produit.dateAnomalie ? anomalie_produit.dateAnomalie|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_logescom_stock_anomalie_produit_show', {'id': anomalie_produit.id}) }}">show</a>
+                    <a href="{{ path('app_logescom_stock_anomalie_produit_edit', {'id': anomalie_produit.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_stock_anomalie_produit_new') }}">Create new</a>
+{% endblock %}

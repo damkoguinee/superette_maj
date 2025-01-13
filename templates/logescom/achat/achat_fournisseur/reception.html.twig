@@ -1,0 +1,202 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "reception" and k != "id_stock") | url_encode %}
+
+{% block title %}réception des produits{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = search %}
+    {% endif %}
+
+    {% set nbrePages = stocks.nbrePages %}
+    {% set pageEncours = stocks.pageEncours %} 
+    {% set id = lieu_vente.id %}
+
+    <div class="row">
+        {% include "_common/_nav_achat.html.twig" %}
+        <div class="col-sm-12 col-md-10" style="overflow:auto;">
+            {% include "_common/_messages_flash.html.twig" %}
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-info text-center text-white bg-info">
+                    <tr>
+                        <th class="bg-info" colspan="9">
+                            <div class="d-flex justify-content-between">
+                                <form class="form" method="GET">
+                                    <select onChange="this.form.submit()" name="magasin" id="" class="form-select">
+                                        <option value="{{magasin.id}}">{{magasin.nomStock}}</option>
+                                        {% for liste_stock in liste_stocks %}
+                                            <option value="{{liste_stock.id}}">{{liste_stock.nomStock}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                                <h6 class="text-center bg-warning">Réception des produits de la commande N° {{achat_fournisseur.numeroFacture}} au {{magasin.nomStock|ucwords}}</h6>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-white bg-info">N°</th>
+                        <th class="text-white bg-info">Désignation</th>
+                        <th class="text-white bg-info text-nowrap">Quantité</th> <!-- Ajout de text-nowrap -->
+                        <th class="text-white bg-info">P.Achat</th>
+                        <th class="text-white bg-info">P.Revient</th>
+                        <th class="text-white bg-info">P.Vente</th>
+                        <th class="text-white bg-info">Péremption</th>
+                        <th class="text-white bg-info">Commentaire</th>
+                        <th class="text-white bg-info">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, stock in stocks.data %}
+                        <form class="form" method="POST" action="{{ path('app_logescom_achat_achat_fournisseur_reception', {id : achat_fournisseur.id, lieu_vente: lieu_vente.id}) }}">
+                            <tr>
+                                <td class="text-center">{{ (key)+1 }}</td>
+                                <td>{{ stock.products.designation }}</td>
+                                <td class="text-end text-nowrap"> <!-- Ajout de text-nowrap -->
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="number" name="quantite" placeholder="{{ stock.quantite }}" class="form-control text-center text-nowrap w-100">
+                                        <input type="hidden" name="id_stock" value="{{stock.id}}">
+                                        <input class="form-control" type="hidden" name="magasin" value="{{magasin.id}}">
+                                        <input class="form-control" type="hidden" name="search" value="{{search}}">
+                                        <input class="form-control" type="hidden" name="pageEncours" value="{{pageEncours}}">
+                                        <input type="hidden" name="reception" value="appro_initial">
+                                    {% else %}
+                                        {{ stock.quantite }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="text" name="prix_achat" required placeholder="{{ stock.prixAchat|number_format(0,',',' ') }}" class="form-control text-center text-nowrap w-100">
+                                    {% else %}
+                                        {{ stock.prixAchat|number_format(0,',',' ') }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="text" name="prix_revient" placeholder="{{ stock.prixRevient|number_format(2,',',' ') }}" class="form-control text-center text-nowrap w-100">
+                                    {% else %}
+                                        {{ stock.prixRevient|number_format(0,',',' ') }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="text" name="prix_vente" placeholder="{{ stock.prixVente|number_format(0,',',' ') }}" class="form-control text-center text-nowrap w-100">
+                                    {% else %}
+                                        {{ stock.prixVente|number_format(0,',',' ') }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="date" name="peremption" value="{{ stock.datePeremption ? stock.datePeremption|date('Y-m-d') : '' }}" class="form-control text-center">
+                                    {% else %}
+                                        {{ stock.datePeremption ? stock.datePeremption|date('Y-m-d') : '' }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if is_granted("ROLE_STOCK") %}
+                                        <input type="text" name="commentaire" class="form-control text-center">
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        {% if is_granted("ROLE_STOCK") %}
+                                            <button class="btn btn-primary mx-1">Ajouter</button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </form>
+                    {% else %}
+                        <tr>
+                            <td colspan="9">Aucun produit disponible</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+            <table class="table table-bordered table-striped table-hover align-middle" >
+                <thead class="sticky-top bg-success text-center">
+                    <tr>
+                        <th class="bg-success" colspan="11">
+                            Liste des produits réceptionnés de la commande N° {{achat_fournisseur.numeroFacture}} au {{magasin.nomStock|ucwords}} 
+                            <a target="_blank" class="btn btn-warning" href="{{ path('app_logescom_achat_achat_fournisseur_reception_pdf', {'id':  achat_fournisseur.id, 'lieu_vente' : lieu_vente.id }) }}" class="btn btn-secondary"><i class="fa fa-file-pdf fs-4"></i></a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-white bg-info">N°</th>
+                        <th class="text-white bg-info">Date</th>
+                        <th class="text-white bg-info">Référence</th>
+                        <th class="text-white bg-info">Désignation</th>
+                        <th class="text-white bg-info">Qtité</th>
+                        <th class="text-white bg-info">P. Achat</th>
+                        <th class="text-white bg-info">Taux</th>
+                        <th class="text-white bg-info">Stock</th>
+                        <th class="text-white bg-info">Commentaire</th>
+                        <th class="text-white bg-info">Traité par</th>
+                        <th class="text-white bg-info">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set cumul_montant = 0 %} 
+                    {% for key, liste_reception in liste_receptions %} 
+                        {% set total = (liste_reception.prixAchat * liste_reception.quantite) / liste_reception.taux %}
+                        {% set cumul_montant = cumul_montant + total %}                       
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class="text-center">{{liste_reception.dateSaisie|date("d/m/Y")}}</td>
+                            <td>{{ liste_reception.product.reference }}</td>
+                            <td>{{ liste_reception.product.designation }}</td>
+                            <td class="text-center">{{liste_reception.quantite}}</td>
+                            <td class="text-end">{{achat_fournisseur.devise.nomDevise == 'gnf' ? (liste_reception.prixAchat / liste_reception.taux)|number_format(0,',',' ') : (liste_reception.prixAchat / liste_reception.taux)|number_format(2,',',' ')}}</td>
+                            <td class="text-center">{{liste_reception.taux}}</td>
+                            <td class="text-center">{{liste_reception.stock.nomStock|ucwords}}</td>
+                            <td>{{liste_reception.commentaire|ucwords}}</td>
+                            <td>{{liste_reception.personnel.prenom|ucwords}}</td>
+                            <td class="text-center">
+                                {% if is_granted("ROLE_STOCK") %}
+                                <form method="post" action="{{path("app_logescom_achat_achat_fournisseur_reception_delete", {id : liste_reception.id, lieu_vente : lieu_vente.id})}}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ liste_reception.id) }}">
+                                    <button class="btn btn-danger">Annuler</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="11">Aucun produit réceptionné</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-center">Totaux</th>
+                        <th colspan="2" class="text-center">{{achat_fournisseur.devise.nomDevise == 'gnf' ? cumul_montant|number_format(0,',',' ') : cumul_montant|number_format(2,',',' ')}}</th>
+                    </tr>
+                </tfoot>           
+                
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RetourProduct{% endblock %}
+
+{% block body %}
+    <h1>RetourProduct</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ retour_product.id }}</td>
+            </tr>
+            <tr>
+                <th>Quantite</th>
+                <td>{{ retour_product.quantite }}</td>
+            </tr>
+            <tr>
+                <th>PrixVente</th>
+                <td>{{ retour_product.prixVente }}</td>
+            </tr>
+            <tr>
+                <th>DateRetour</th>
+                <td>{{ retour_product.dateRetour ? retour_product.dateRetour|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateSaisie</th>
+                <td>{{ retour_product.dateSaisie ? retour_product.dateSaisie|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_vente_retour_product_index') }}">back to list</a>
+
+    <a href="{{ path('app_logescom_vente_retour_product_edit', {'id': retour_product.id}) }}">edit</a>
+
+    {{ include('logescom/vente/retour_product/_delete_form.html.twig') }}
+{% endblock %}

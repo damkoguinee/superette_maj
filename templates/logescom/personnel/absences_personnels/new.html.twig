@@ -1,0 +1,87 @@
+{% extends 'base_logescom.html.twig' %}
+{% set queryParams = app.request.query.all %}
+{% set queryString = queryParams|filter((v, k) => k != "page" and k != "ajustement" and k != "id_stock") | url_encode %}
+
+{% block title %}ajout des heures{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_personnel.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            {# {{ include('comptable/absences_personnels/_form.html.twig') }} #}
+            {% if app.request.query.has('jour') %}
+                {% set jour = app.request.query.get('jour') %}
+            
+            {% else %}
+                {% set jour = "now"|date("Y-m-d") %}
+            {% endif %}
+            <form class="form">
+                <div class="row bg-info text-white p-2 mx-2">
+                    <div class="col-3"><label for="" class="form-label">Selectionnez le jour</label></div>
+                    <div class="col-3"><input type="date" name="jour" value="{{jour}}" max="{{ "now"|date("Y-m-d") }}" class="form-control" onChange="this.form.submit()"></div>
+                </div>
+            </form>
+            {% if jour is not empty %}
+                <table class="table table-bordered table-striped table-hover align-middle">
+
+                    <thead class="sticky-top bg-light text-center">
+                        <tr>
+                            <th colspan="6" class="text-center">
+                            Enregistrer des absences ou des heures supplementaires pour la période de {{ jour | date("m/Y")}}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>N°</th>
+                            <th>Prénom & Nom</th>
+                            <th>Téléphone</th>
+                            <th>Rattachement</th>
+                            <th>Absence/Heures Sup</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        {% for key, personnel in personnels %}
+
+                            <form class="form">
+                                <tr>
+                                    <td>{{(key +1 )}}</td>
+                                    <td class="text-start">{{ personnel.prenom | ucwords ~ " " ~ personnel.nom | strtoupper  }}</td>
+                                    <td>{{ personnel.telephone  }}</td>
+                                    <td>
+                                        {{personnel.lieuVente.adresse | ucfirst }}
+                                    </div>
+                                    <td>
+                                        <input type="text" name="absence" required class="form-control">
+                                        <input type="hidden" name="jour" value="{{ jour }}" class="form-control">
+                                        <input type="hidden" name="personnel" value="{{ personnel.id }}" class="form-control">
+
+                                    </td>
+                                    <td><button class="btn btn-primary" onClick="alerteConfirmation()" >Valider</button></td>
+                                </tr>
+                            </form>
+                            
+                            
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                {# <div class="alert alert-info">Selectionnez le jour</div> #}
+            {% endif %}
+            <a  class="btn btn-light my-4" href="{{ path('app_logescom_personnel_absences_personnel_index', {lieu_vente : lieu_vente.id }) }}">Retour</a>
+
+        </div>
+    </div>
+
+{% endblock %}

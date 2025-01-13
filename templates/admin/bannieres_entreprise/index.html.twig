@@ -1,0 +1,57 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}bannières{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            <table class="table table-bordered table-striped table-hover align-middle text-center">
+                <thead class="sticky-top bg-light text-center">
+                    <tr>                        
+                        <th colspan="3">Liste des bannières <a class="btn btn-primary" href="{{ path('app_admin_bannieres_entreprise_new') }}">Ajouter une bannière</a></th>
+                    </tr>
+                    <tr>
+                        <th>Id</th>
+                        <th>Image</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, bannieres_entreprise in bannieres_entreprises %}
+                        <tr>
+                            <td>{{ (key +1 ) }}</td>
+                            <td>
+                                <img src="{{asset(chemin_images_bannieres) ~ bannieres_entreprise.image}}" alt="image banniere" class="img-banniere-miniature">
+                            </td>
+                            <td class="text-center">
+                                {# <a class="btn btn-success" href="{{ path('app_admin_bannieres_entreprise_show', {'id': bannieres_entreprise.id}) }}"><i class="fa fa-eye"></i></a> #}
+                                {% if bannieres_entreprise.id != 1 %}
+                                
+                                    <a onclick="alerteS()" class="btn btn-danger" href="{{ path('app_admin_bannieres_entreprise_delete', {'id': bannieres_entreprise.id}) }}"><i class="fa fa-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">Aucune bannière enregistrée</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}

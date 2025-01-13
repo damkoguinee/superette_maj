@@ -1,0 +1,133 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}Ajout produit{% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+{% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <div class="row mb-5">
+                <h3 class="text-center">Ajouter un nouveau produit</h3>
+                {{form_errors(productsForm)}}
+                {{form_start(productsForm)}}
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3">
+                            {{form_row(productsForm.categorie)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.dimension)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.epaisseur)}}
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            {{form_row(productsForm.origine)}}
+                        </div>
+
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.type)}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.reference)}}
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            {{form_row(productsForm.designation)}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            {{form_row(productsForm.codeBarre)}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            {{form_row(productsForm.typeProduit)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.nbrePiece)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.nbrePaquet)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.tva)}}
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.prixVente)}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-2">
+                            {{form_row(productsForm.nbreVente)}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            {{form_row(productsForm.statut)}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            {{form_row(productsForm.statutComptable)}}
+                        </div>
+                    </div>
+                    <input type="hidden" name="categorie" value="{{categorieId.id}}">
+                    <button type="submit" class="btn btn-success my-2">Ajouter</button>
+                {{form_end(productsForm)}}
+                {# {{ include('admin/products/_form.html.twig') }} #}
+            </div>
+            <div class="row">
+                <table class="table table-bordered table-striped table-hover align-middle">
+                    <thead class="sticky-top bg-light text-center">
+                        <tr>
+                            <th>N°</th>
+                            <th>Catégorie</th>
+                            <th>Référence</th>
+                            <th>Désignation</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for key, product in products %}
+                        {% if product.typeProduit == 'detail' %}
+                            {% set color = 'danger' %}
+                        {% elseif product.typeProduit == 'paquet' %}
+                            {% set color = 'warning' %}
+                        {% else %}
+                            {% set color = '' %}
+                        {% endif %}
+                        
+                        
+                        <tr>
+                            <td class="text-center">
+                                {{ (key)+1 }}
+                            </td>
+                            <td class="text-{{color}}">{{ product.categorie.nameCategorie }}</td>
+                            <td class="text-{{color}}">{{ product.reference }}</td>
+                            <td class="text-{{color}}">{{ product.designation }}</td>
+                            <td class="text-center">
+                                <a class="btn btn-success" href="{{ path('app_admin_products_show', {'id': product.id}) }}"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('app_admin_products_edit', {'id': product.id}) }}"><i class="fa fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Aucun produit trouvé</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# <a class="btn btn-secondary my-5" href="{{ path('app_admin_products_index') }}">Retour</a> #}
+        </div>
+    </div>
+{% endblock %}

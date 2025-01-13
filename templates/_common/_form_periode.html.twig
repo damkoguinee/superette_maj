@@ -1,0 +1,21 @@
+{% if app.request.query.has('date1') %}
+    {% set date1 = app.request.query.get('date1') %}
+    {% set date2 = app.request.query.get('date2') %}
+
+{% else %}
+    {% set date1 = "now"|date("Y-01-01") %}
+    {% set date2 = "now"|date("Y-m-d") %}
+{% endif %}
+<div class="col-6">
+    <form class="form w-100" action="">
+        <div class="row p-2 mx-2">
+            <div class="col-sm-12 col-md-5">
+                <input type="date" name="date1" value="{{ date1 }}" class="form-control" onChange="this.form.submit()" max="{{ date2 }}"> 
+            </div>
+            <div class="col-1">au</div>
+            <div class="col-sm-12 col-md-6">
+                <input type="date" name="date2" value="{{ date2 }}" class="form-control" onChange="this.form.submit()" min="{{ date1}}" max="{{ "now"|date("Y-m-d") }}">
+            </div>
+        </div>
+    </form>
+</div>

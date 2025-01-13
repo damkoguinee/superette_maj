@@ -1,0 +1,14 @@
+<div class="col-sm-12 col-md-2 pb-3" style="background-color:#152736;">     
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_vente", {lieu_vente : lieu_vente.id})}}">Nouvelle vente</a>
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" target="_blank" href="{{path("app_logescom_vente_facturation_facture_petit", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Facture petit format<i class="fa fa-file-pdf fs-3 text-warning"></i></a>
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" target="_blank" href="{{path("app_logescom_vente_facturation_facture", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Imprimer la facture <i class="fa fa-file-pdf fs-3 text-warning"></i></a>
+    <a target="_blank" style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_bon_livraison", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Bon de livraison <i class="fa fa-file-pdf fs-3 text-warning"></i></a>
+    <a target="_blank" style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_prepa_commande1", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Prépa-commande 1 <i class="fa fa-file-pdf fs-3 text-warning"></i></a>
+    <a target="_blank" style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_prepa_commande2", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Prépa-commande 2 <i class="fa fa-file-pdf fs-3 text-warning"></i></a>
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_livraison_livraison_facture", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Livraison</a>
+
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_retour_product_facture", {id : facturation.id, lieu_vente : lieu_vente.id})}}">Retour facture</a>
+    
+    <a style="width: 100%; " class="btn btn-light text-center fw-bold m-auto my-2" href="{{path("app_logescom_vente_facturation_index", {lieu_vente : lieu_vente.id})}}">Facturations</a>
+
+</div>

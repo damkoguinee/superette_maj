@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RetourProduct index{% endblock %}
+
+{% block body %}
+    <h1>RetourProduct index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Quantite</th>
+                <th>PrixVente</th>
+                <th>DateRetour</th>
+                <th>DateSaisie</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for retour_product in retour_products %}
+            <tr>
+                <td>{{ retour_product.id }}</td>
+                <td>{{ retour_product.quantite }}</td>
+                <td>{{ retour_product.prixVente }}</td>
+                <td>{{ retour_product.dateRetour ? retour_product.dateRetour|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ retour_product.dateSaisie ? retour_product.dateSaisie|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_logescom_vente_retour_product_show', {'id': retour_product.id}) }}">show</a>
+                    <a href="{{ path('app_logescom_vente_retour_product_edit', {'id': retour_product.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_vente_retour_product_new') }}">Create new</a>
+{% endblock %}

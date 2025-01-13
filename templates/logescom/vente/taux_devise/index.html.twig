@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TauxDevise index{% endblock %}
+
+{% block body %}
+    <h1>TauxDevise index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Taux</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for taux_devise in taux_devises %}
+            <tr>
+                <td>{{ taux_devise.id }}</td>
+                <td>{{ taux_devise.taux }}</td>
+                <td>
+                    <a href="{{ path('app_logescom_vente_taux_devise_show', {'id': taux_devise.id}) }}">show</a>
+                    <a href="{{ path('app_logescom_vente_taux_devise_edit', {'id': taux_devise.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_logescom_vente_taux_devise_new') }}">Create new</a>
+{% endblock %}

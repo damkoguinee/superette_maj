@@ -1,0 +1,95 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}produits{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    {% if app.request.query.has('search') %}
+        {% set search = app.request.query.get('search') %}
+    {% else %}
+        {% set search = "" %}
+    {% endif %}
+
+    <div class="row">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {% include "_common/_messages_flash.html.twig" %}
+            <h3 class="text-center">Liste des Produits</h3>
+            
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="sticky-top bg-info text-center text-white">
+                    <tr>
+                        <th class="bg-info" colspan="7">
+                            <div class="d-flex justify-content-between">
+                                {# <a class="btn btn-primary" href="{{ path('app_admin_products_new') }}">Ajouter un nouveau produit</a> #}
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>N°</th>
+                        <th>Catégorie</th>
+                        <th>Désignation</th>
+                        <th>Nbre Pièce</th>
+                        <th>Nbre Paq</th>
+                        <th>Codebarre</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key, product in products.data %}
+                    
+                    <tr>
+                        <td class="text-center">
+                            {{ (key)+1 }}
+                            {# {% if product.categorie.couverture %}            
+                                <img src="{{asset(chemin_images_product) ~ product.categorie.imgProduit}}" alt="image {{ product.categorie.nameCategorie }}" class="miniature">                        
+                            {% else %}
+                                <img alt="image {{ product.categorie.nameCategorie }}" class="miniature">
+                            {% endif %} #}
+                        </td>
+                        <td>{{ product.categorie.nameCategorie }}</td>
+                        {# <td>{{ product.reference }}</td> #}
+                        <td>{{ product.designation }}</td>
+                        <td class='text-center'>{{ product.nbrePiece }}</td>
+                        <td class='text-center'>{{ product.nbrePaquet }}</td>
+                        <td>{{ product.codeBarre }}</td>
+                        <td class="text-center">
+                            <a class="btn btn-success" href="{{ path('app_admin_products_show', {'id': product.id}) }}"><i class="fa fa-eye"></i></a>
+                            <a class="btn btn-warning" href="{{ path('app_admin_products_edit', {'id': product.id}) }}"><i class="fa fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucun produit trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                
+                
+            </table>
+            {% set path = 'app_admin_products_index'  %}
+            {% set nbrePages = products.nbrePages %}
+            {% set pageEncours = products.pageEncours %}                    
+            
+            {% if nbrePages > 1 %}                    
+                {% include "_common/_admin/_pagination.html.twig" %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}pdf{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {% block stylesheets %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    {% endblock %}
+</head>
+<body>
+    <style>
+        @page {
+            margin: 5px 5px;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+        }
+        .header, .footer {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        .table-container {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            font-size: 12px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f4f4f4;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .no-break {
+            page-break-inside: avoid;
+        }
+    </style>
+    
+    <div class="header">
+        <img src="data:image/jpeg;base64,{{ logoPath }}" alt="Logo" width="100" height="200">
+        <p>{{ lieu_vente.typeCommerce ~ " " ~ lieu_vente.entreprise.numeroAgrement }}</p>
+        <p>{{ lieu_vente.adresse ~ " Tél:" ~ lieu_vente.telephone }}</p>
+    </div>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="{{ stockNames|length + 5 }}">Etat du stock à la date du {{ "now"|date("d/m/Y à H:i") }}</th>
+                </tr>
+                <tr>
+                    <th>N°</th>
+                    <th>Désig</th>
+                    {% for stockName in stockNames %}
+                        {% set shortStockName = stockName|slice(0, 10) %}
+                        <th style="transform: rotate(-45deg); font-size: 10px;">{{ shortStockName }}</th>
+                    {% endfor %}
+                    <th>Tot </th>
+                    <th>N.Liv</th>
+                    <th>Dispo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td style="text-align:left; white-space: wrap;">{{ item.product.getDesignation() }}</td>
+                        {% set totalQuantity = 0 %}
+                        {% for stockName in stockNames %}
+                            {% set quantity = item.quantities[stockName] ?? 0 %}
+                            <td>{{ quantity|number_format(0,',',' ') }}</td>
+                            {% set totalQuantity = totalQuantity + quantity %}
+                        {% endfor %}
+                        <td>{{ totalQuantity }}</td>
+                        <td>{{ item.resteLivraison }}</td>
+                        <td>{{ (totalQuantity - item.resteLivraison)|number_format(0,',',' ') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2">Totaux</th>
+                    {% for stockName in stockNames %}
+                        <th>{{ totals.stocks[stockName]|number_format(0,',',' ') }}</th>
+                    {% endfor %}
+                    <th>{{ totals.totalQuantity|number_format(0,',',' ') }}</th>
+                    <th>{{ totals.resteLivraison|number_format(0,',',' ') }}</th>
+                    <th>{{ totals.disponible|number_format(0,',',' ') }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    {# <div class="footer">
+        <p>Stock imprimé par {{ app.user.prenom | ucwords ~ " " ~ app.user.nom | strtoupper ~ " le " ~ "now"|date("d/m/Y à H:i") }}</p>
+    </div> #}
+</body>
+</html>

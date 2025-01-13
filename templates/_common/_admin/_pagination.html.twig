@@ -1,0 +1,23 @@
+{% if nbrePages %}
+    <nav aria-label="Page navigation example ">
+        <ul class="pagination justify-content-end">
+            {% if pageEncours > 1 %}
+                <li class="page-item ">
+                    <a class="page-link" href="{{path(path, {pageEncours : pageEncours - 1, search : search} ) }}">&lt;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" ><a class="page-link">&lt;</a></li>
+            {% endif %}
+            {% for page in 1..nbrePages %}                
+                <li class="page-item {{ ( page == pageEncours) ? 'active' : ''}} "><a class="page-link" href="{{path(path, {pageEncours : page, search : search } ) }}">{{page}}</a></li>
+            {% endfor %}
+            {% if pageEncours < nbrePages %}
+                <li class="page-item "><a class="page-link" href="{{path(path, {pageEncours : pageEncours + 1, search : search} ) }}">&gt;</a></li>
+            {% else %}
+                <li class="page-item disabled "><a href="" class="page-link" >&gt;</a></li>
+            {% endif %}
+            </li>
+        </ul>
+    </nav>
+
+{% endif %}

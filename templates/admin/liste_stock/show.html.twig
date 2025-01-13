@@ -1,0 +1,42 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}ListeStock{% endblock %}
+
+{% block body %}
+    <h1>ListeStock</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ liste_stock.id }}</td>
+            </tr>
+            <tr>
+                <th>NomStock</th>
+                <td>{{ liste_stock.nomStock }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ liste_stock.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Surface</th>
+                <td>{{ liste_stock.surface }}</td>
+            </tr>
+            <tr>
+                <th>NbrePieces</th>
+                <td>{{ liste_stock.nbrePieces }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ liste_stock.type }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_liste_stock_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_liste_stock_edit', {'id': liste_stock.id}) }}">edit</a>
+
+    {{ include('admin/liste_stock/_delete_form.html.twig') }}
+{% endblock %}

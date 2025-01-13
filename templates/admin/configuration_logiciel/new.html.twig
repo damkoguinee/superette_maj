@@ -1,0 +1,29 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}ajout configuration_logiciel{% endblock %}
+{% block bandeau %} {% endblock %}
+ {% block carousel %}
+    <div id="carouselExampleAutoplaying" class="carousel slide py-2" data-bs-ride="carousel">
+    </div>
+ {% endblock %}
+ {% block categories %} {% endblock %}
+ {% block contact %} {% endblock %}
+ {% block collaborateurs %} {% endblock %}
+ {% block scroll %} {% endblock %}
+ {% block footer %} {% endblock %}
+ {% block social %} {% endblock %}
+
+{% block produits %}
+    <div class="row my-2">
+        {% include "_common/_nav_admin.html.twig" %}
+
+        <div class="col-sm-12 col-md-10">
+            {{ include("_common/_messages_flash.html.twig") }}
+            <h3>Configuration du logiciel</h3>
+
+            {{ include('admin/configuration_logiciel/_form.html.twig') }}
+
+            <a class="btn btn-light my-4" href="{{ path('app_admin_configuration_logiciel_index') }}">Retour</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base_logescom_home.html.twig' %}
+
+{% block title %}LieuVentes{% endblock %}
+
+{% block body %}
+    <h1>LieuVentes</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ lieu_vente.id }}</td>
+            </tr>
+            <tr>
+                <th>Designation</th>
+                <td>{{ lieu_vente.designation }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_lieux_ventes_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_lieux_ventes_edit', {'id': lieu_vente.id}) }}">edit</a>
+
+    {{ include('admin/lieux_ventes/_delete_form.html.twig') }}
+{% endblock %}
